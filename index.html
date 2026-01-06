@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevPortfolio Pro | Web Developer Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class', 
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563eb',  // blue
+                        secondary: '#1e40af' // darker blue
+                    }
+                }
+            }
+        }
+        window.addEventListener('DOMContentLoaded', () => {
+  const icon = document.getElementById('introIcon');
+
+  // Make sure Feather icons render first
+  feather.replace();
+
+  // Fade in + bounce
+  setTimeout(() => {
+    icon.classList.remove('opacity-0', 'scale-75');
+    icon.classList.add('opacity-100', 'scale-100', 'animate-jumpTwice');
+  }, 400);
+
+  // Fade out after 1.5s
+  setTimeout(() => {
+    icon.classList.add('opacity-0', 'scale-75');
+  }, 1500);
+
+  // Remove after fade
+  setTimeout(() => {
+    icon.remove();
+  }, 2600);
+});
+    </script>
+    <style>
+        @keyframes jumpTwice {
+          0%, 100% { transform: translateY(0) scale(1); }
+          20%, 60% { transform: translateY(-12px) scale(1.05); }
+          40%, 80% { transform: translateY(0) scale(1); }
+        }
+        .animate-jumpTwice {
+          animation: jumpTwice 1.2s ease-in-out;
+        }
+        </style>
+</head>
+<body class="dark bg-slate-900 text-slate-200 transition-colors duration-500">
+    <custom-navbar class="bg-slate-600 text-slate-200"></custom-navbar>
+    <div id="introIcon"
+    class="fixed bottom-16 right-7 opacity-0 scale-75 transition-all duration-700 z-50 flex items-center justify-center">
+ <i data-feather="arrow-down" class="text-primary w-6 h-6"></i>
+</div>
+
+<!-- Dark Mode Toggle -->
+<button id="darkToggle"
+        class="fixed bottom-4 right-4 bg-primary text-white p-3 rounded-full shadow-lg z-50 flex items-center justify-center">
+  🌙
+</button>
+
+    <main id="pricing" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Hero Section -->
+        <section class="text-center mb-20">
+            <h1 class="text-5xl font-bold text-gray-900 dark:text-gray-100 mb-6">Your Vision, <span class="text-primary">My Code</span></h1>
+            <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">Professional web development services with transparent pricing and exceptional results.</p>
+        </section>
+
+        <!-- Project Spotlight Carousel -->
+        <section id="showcase" class="relative mb-20 max-w-6xl mx-auto text-center">
+          <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-gray-100 mb-10">Featured Projects</h2>
+          <div class="relative flex items-center justify-center overflow-hidden rounded-2xl">
+            <button id="prev" class="absolute left-2 sm:left-6 z-10 bg-primary text-white p-1 sm:p-2 rounded-full opacity-80 hover:opacity-100 transition">‹</button>
+            <div id="carousel" class="flex items-center gap-6 sm:gap-10 transition-transform duration-700 ease-in-out">
+              <a href="https://example1.com" target="_blank" class="carousel-item w-40 sm:w-56 md:w-72 flex-shrink-0 rounded-2xl overflow-hidden transition-all duration-500">
+                <img src="images/project1.jpg" alt="Project 1" class="w-full h-40 sm:h-52 md:h-64 object-cover rounded-2xl shadow-lg">
+              </a>
+              <a href="https://example2.com" target="_blank" class="carousel-item w-40 sm:w-56 md:w-72 flex-shrink-0 rounded-2xl overflow-hidden transition-all duration-500">
+                <img src="images/project2.jpg" alt="Project 2" class="w-full h-40 sm:h-52 md:h-64 object-cover rounded-2xl shadow-lg">
+              </a>
+              <a href="https://example3.com" target="_blank" class="carousel-item w-40 sm:w-56 md:w-72 flex-shrink-0 rounded-2xl overflow-hidden transition-all duration-500">
+                <img src="images/project3.jpg" alt="Project 3" class="w-full h-40 sm:h-52 md:h-64 object-cover rounded-2xl shadow-lg">
+              </a>
+              <a href="https://example4.com" target="_blank" class="carousel-item w-40 sm:w-56 md:w-72 flex-shrink-0 rounded-2xl overflow-hidden transition-all duration-500">
+                <img src="images/project4.jpg" alt="Project 4" class="w-full h-40 sm:h-52 md:h-64 object-cover rounded-2xl shadow-lg">
+              </a>
+            </div>
+            <button id="next" class="absolute right-2 sm:right-6 z-10 bg-primary text-white p-1 sm:p-2 rounded-full opacity-80 hover:opacity-100 transition">›</button>
+          </div>
+        </section>
+
+        <script>
+          const carousel = document.getElementById('carousel');
+          const items = document.querySelectorAll('.carousel-item');
+          const next = document.getElementById('next');
+          const prev = document.getElementById('prev');
+          let index = 0;
+          let interval;
+
+          function updateCarousel() {
+            items.forEach((item, i) => {
+              item.classList.remove('scale-100', 'opacity-100', 'border-4', 'border-gold-accent', 'shadow-2xl');
+              item.classList.add('scale-90', 'opacity-60');
+            });
+
+            const currentItem = items[index];
+            currentItem.classList.add('scale-100', 'opacity-100', 'shadow-2xl');
+            currentItem.classList.remove('scale-90', 'opacity-60');
+
+            const offset = (carousel.clientWidth / 2) - (currentItem.clientWidth / 2) - (index * (currentItem.clientWidth + 40));
+            carousel.style.transform = `translateX(${offset}px)`;
+          }
+
+          function nextSlide() {
+            index = (index + 1) % items.length;
+            updateCarousel();
+          }
+
+          function prevSlide() {
+            index = (index - 1 + items.length) % items.length;
+            updateCarousel();
+          }
+
+          next.addEventListener('click', nextSlide);
+          prev.addEventListener('click', prevSlide);
+
+          function startAutoScroll() {
+            interval = setInterval(nextSlide, 4000);
+          }
+
+          function stopAutoScroll() {
+            clearInterval(interval);
+          }
+
+          carousel.addEventListener('mouseenter', stopAutoScroll);
+          carousel.addEventListener('mouseleave', startAutoScroll);
+
+          window.addEventListener('resize', updateCarousel);
+          updateCarousel();
+          startAutoScroll();
+        </script>
+
+        <!-- Pricing Cards -->
+        <section id="pricing" class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20 transition-colors duration-500">
+            <!-- Basic Plan -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-transform transition-colors duration-500 hover:scale-105">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <i data-feather="box" class="text-primary mr-2"></i>
+                        <h3 class="text-2xl font-bold">Basic</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6">Perfect for simple websites and landing pages</p>
+                    <span class="text-xs text-gray-500">starting at</span>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-primary">$499</span>
+                        <span class="text-gray-500">/project</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center"><i data-feather="check" class="text-green-500 mr-2"></i> 1-3 Pages</li>
+                        <li class="flex items-center"><i data-feather="check" class="text-green-500 mr-2"></i> Responsive Design</li>
+                        <li class="flex items-center"><i data-feather="check" class="text-green-500 mr-2"></i> Basic SEO</li>
+                        <li class="flex items-center"><i data-feather="check" class="text-green-500 mr-2"></i> 1 Revision Round</li>
+                        <li class="flex items-center"><i data-feather="check" class="text-green-500 mr-2"></i> 2 Weeks Delivery</li>
+                    </ul>
+                    <button class="w-full bg-primary hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-lg transition">
+                        Get Started
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pro Plan (Featured) -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border-2 border-primary transition-transform hover:scale-105 transform scale-105">
+                <div class="bg-primary text-white p-2 text-center text-sm font-medium">
+                    MOST POPULAR
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <i data-feather="zap" class="text-primary mr-2"></i>
+                        <h3 class="text-2xl font-bold">Pro</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6">Ideal for small business websites and web apps</p>
+                    <span class="text-xs text-gray-500">starting at</span>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-primary">$1,299</span>
+                        <span class="text-gray-500">/project</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center"><i data-feather="check" class="text-green-500 mr-2"></i> 5-10 Pages</li>
+                        <li class="flex items-center"><i data-feather="check" class="text-green-500 mr-2"></i> Responsive Design</li>
+                        <li class="flex items-center"><i data-feather="check" class="text-green-500 mr-2"></i> Advanced SEO</li>
+                        <li class="flex items-center"><i data-feather="check" class="text-green-500 mr-2"></i> CMS Integration</li>
+                        <li class="flex items-center"><i data-feather="check" class="text-green-500 mr-2"></i> Contact Forms</li>
+                        <li class="flex items-center"><i data-feather="check" class="text-green-500 mr-2"></i> 3 Revision Rounds</li>
+                        <li class="flex items-center"><i data-feather="check" class="text-green-500 mr-2"></i> 4 Weeks Delivery</li>
+                    </ul>
+                    <button class="w-full bg-primary hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-lg transition">
+                        Get Started
+                    </button>
+                </div>
+            </div>
+
+            <!-- Enterprise Plan -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-transform hover:scale-105">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <i data-feather="briefcase" class="text-primary mr-2"></i>
+                        <h3 class="text-2xl font-bold">Enterprise</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6">Custom solutions for complex business needs</p>
+                    <span class="text-xs text-gray-500">starting at</span>
+                    <div class="mb-6">
+                        
+                        <span class="text-4xl font-bold text-primary">$3,999+</span>
+                        <span class="text-gray-500">/project</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center"><i data-feather="check" class="text-green-500 mr-2"></i> Unlimited Pages</li>
+                        <li class="flex items-center"><i data-feather="check" class="text-green-500 mr-2"></i> Custom Web Application</li>
+                        <li class="flex items-center"><i data-feather="check" class="text-green-500 mr-2"></i> API Development</li>
+                        <li class="flex items-center"><i data-feather="check" class="text-green-500 mr-2"></i> Database Integration</li>
+                        <li class="flex items-center"><i data-feather="check" class="text-green-500 mr-2"></i> User Authentication</li>
+                        <li class="flex items-center"><i data-feather="check" class="text-green-500 mr-2"></i> Priority Support</li>
+                        <li class="flex items-center"><i data-feather="check" class="text-green-500 mr-2"></i> Unlimited Revisions</li>
+                        <li class="flex items-center"><i data-feather="check" class="text-green-500 mr-2"></i> Custom Timeline</li>
+                    </ul>
+                    <button id="services" class="w-full bg-primary hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-lg transition">
+                        Get Started
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="mb-20 transition-colors duration-500">
+            <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-gray-100 mb-12">What's Included in Every Project</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-primary-100 dark:bg-primary-900 p-2 rounded-full mr-4">
+                            <i data-feather="code" class="text-primary"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">Clean Code</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300">Well-structured, documented, and maintainable code that follows best practices.</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-primary-100 dark:bg-primary-900 p-2 rounded-full mr-4">
+                            <i data-feather="smartphone" class="text-primary"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">Mobile-Friendly</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300">Fully responsive design that works perfectly on all devices and screen sizes.</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-primary-100 dark:bg-primary-900 p-2 rounded-full mr-4">
+                            <i data-feather="shield" class="text-primary"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">Security</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300">Implementation of security best practices to protect your website and users.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Form -->
+        <section id="contact" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 mb-20">
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6">Let's Build Something Awesome</h2>
+            <form class="space-y-6" id="contactForm" action="/api/contact" method="POST">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
+                        <input type="text" id="name" name="name" required class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-primary focus:border-primary">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+                        <input type="email" id="email" name="email" required class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-primary focus:border-primary">
+                    </div>
+                </div>
+                <div>
+                    <label for="project" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Project Type</label>
+                    <select id="project" name="project" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-primary focus:border-primary">
+                        <option value="basic">Basic Website</option>
+                        <option value="pro" selected>Pro Website</option>
+                        <option value="enterprise">Enterprise Solution</option>
+                        <option value="other">Other (Describe below)</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="message" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Project Details</label>
+                    <textarea id="message" name="message" rows="4" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-primary focus:border-primary"></textarea>
+                </div>
+                <div class="flex items-center">
+                    <button type="submit" class="bg-primary hover:bg-primary-600 text-white font-medium py-2 px-6 rounded-lg transition">
+                        Send Message
+                    </button>
+                    <div id="formResponse" class="ml-4"></div>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <custom-footer></custom-footer>
+
+    <script src="components/navbar.js"></script>
+    <script src="components/footer.js"></script>
+    <script src="/javascripy/script.js" defer></script>
+    <script>
+        feather.replace();
+
+        // Dark/Light mode toggle - default is dark, toggle removes dark for light mode
+        const darkToggle = document.getElementById('darkToggle');
+        darkToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark'); // remove dark to go light
+            // Optional: change icon
+            darkToggle.textContent = document.body.classList.contains('dark') ? '🌙' : '☀️';
+        });
+        // Set initial icon to 🌙 (dark mode)
+        darkToggle.textContent = '🌙';
+
+        // Simple form handling for demo purposes
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const responseDiv = document.getElementById('formResponse');
+            responseDiv.textContent = 'Message sent successfully!';
+            responseDiv.className = 'text-green-500';
+            this.reset();
+            
+            // In a real scenario, you would make an API call here
+            // fetch('/api/contact', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify({
+            //         name: this.name.value,
+            //         email: this.email.value,
+            //         project: this.project.value,
+            //         message: this.message.value
+            //     }),
+            // })
+            // .then(response => response.json())
+            // .then(data => {
+            //     responseDiv.textContent = data.message;
+            //     responseDiv.className = data.success ? 'text-green-500' : 'text-red-500';
+            //     if (data.success) {
+            //         this.reset();
+            //     }
+            // })
+            // .catch(error => {
+            //     responseDiv.textContent = 'Error sending message. Please try again.';
+            //     responseDiv.className = 'text-red-500';
+            // });
+        });
+    </script>
+</body>
+</html>

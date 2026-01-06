@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Client Onboarding</title>
+  <style>
+    :root {
+      --bg: #0f1115;
+      --panel: #151922;
+      --accent: #4f8cff;
+      --text: #e6e8ee;
+      --muted: #9aa0b3;
+      --border: #23283a;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+    }
+
+    nav {
+      height: 60px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      border-bottom: 1px solid var(--border);
+      background: var(--panel);
+    }
+
+    nav .logo {
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 380px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 28px;
+    }
+
+    .login-card h1 {
+      margin: 0 0 8px 0;
+      font-size: 22px;
+    }
+
+    .login-card p {
+      margin: 0 0 24px 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: var(--muted);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 16px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #0b0e14;
+      color: var(--text);
+      font-size: 14px;
+      resize: vertical;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 6px;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .footer-text {
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .back-link {
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--accent);
+      text-align: center;
+      cursor: pointer;
+      text-decoration: underline;
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="logo">Client Onboarding</div>
+  </nav>
+
+  <main>
+    <div class="login-card">
+      <h1>Client Onboarding</h1>
+
+      <form id="onboardingForm">
+
+        <label for="business">Briefly, what is your business about?</label>
+        <textarea id="business" name="business" rows="4" required></textarea>
+
+        <label for="notes">Any additional notes or comments</label>
+        <textarea id="notes" name="notes" rows="4" placeholder="Optional"></textarea>
+
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" placeholder="Required" required pattern="[0-9]{10,15}" />
+
+        <button type="submit">Submit Info</button>
+      </form>
+
+      <button class="back-link" type="button" onclick="window.location.href='client-signup.html'">Back to Signup</button>
+
+      <div class="footer-text">Protected system</div>
+    </div>
+  </main>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCmACuB6COC6welNT7uN5aX4BXYVL-OEF8",
+      authDomain: "tophers-design.firebaseapp.com",
+      projectId: "tophers-design",
+      storageBucket: "tophers-design.firebasestorage.app",
+      messagingSenderId: "163525514090",
+      appId: "1:163525514090:web:180497723fe8b8f5694b13"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    
+    // Auth state guard
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.replace("client-loggin.html");
+        return;
+      }
+    
+      const userDocRef = doc(db, "users", user.uid);
+    
+      // Check if onboarding already completed
+      try {
+        const docSnap = await getDoc(userDocRef);
+        if (docSnap.exists() && docSnap.data().onboardingComplete) {
+          window.location.replace("client-dash.html");
+          return;
+        }
+      } catch (err) {
+        console.error("Error fetching user document:", err);
+      }
+    
+      // Attach form submit listener now that user exists
+      const form = document.getElementById("onboardingForm");
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+    
+        const business = document.getElementById("business").value.trim();
+        const notes = document.getElementById("notes").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+    
+        try {
+          await updateDoc(userDocRef, {
+            business,
+            notes,
+            phone,
+            onboardingComplete: false
+          });
+          window.location.href = "client-dash.html";
+        } catch (error) {
+          console.error("Error updating document:", error);
+          alert("Failed to submit info. Please try again.");
+        }
+      });
+    });
+    </script>
+</body>
+</html>

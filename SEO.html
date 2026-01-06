@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevPortfolio Pro | Web Developer Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class', 
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#8b5cf6'
+                    }
+                }
+            }
+        }
+        window.addEventListener('DOMContentLoaded', () => {
+  const icon = document.getElementById('introIcon');
+
+  // Make sure Feather icons render first
+  feather.replace();
+
+  // Fade in + bounce
+  setTimeout(() => {
+    icon.classList.remove('opacity-0', 'scale-75');
+    icon.classList.add('opacity-100', 'scale-100', 'animate-jumpTwice');
+  }, 400);
+
+  // Fade out after 1.5s
+  setTimeout(() => {
+    icon.classList.add('opacity-0', 'scale-75');
+  }, 1500);
+
+  // Remove after fade
+  setTimeout(() => {
+    icon.remove();
+  }, 2600);
+});
+    </script>
+    <style>
+        @keyframes jumpTwice {
+          0%, 100% { transform: translateY(0) scale(1); }
+          20%, 60% { transform: translateY(-12px) scale(1.05); }
+          40%, 80% { transform: translateY(0) scale(1); }
+        }
+        .animate-jumpTwice {
+          animation: jumpTwice 1.2s ease-in-out;
+        }
+        </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-500">
+    <custom-navbar></custom-navbar>
+    <div id="introIcon"
+    class="fixed bottom-16 right-7 opacity-0 scale-75 transition-all duration-700 z-50 flex items-center justify-center">
+ <i data-feather="arrow-down" class="text-primary w-6 h-6"></i>
+</div>
+
+<!-- Dark Mode Toggle -->
+<button id="darkToggle"
+        class="fixed bottom-4 right-4 bg-primary text-white p-3 rounded-full shadow-lg z-50 flex items-center justify-center">
+  🌙
+</button>

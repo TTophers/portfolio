@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-100">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Client Dashboard - Uploads</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="h-full flex bg-gray-100 text-gray-800 font-sans">
+
+  <button id="mobileMenuBtn" class="fixed top-4 left-4 z-50 p-2 text-slate-700 bg-slate-100 rounded-md" aria-label="Toggle Menu">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </button>
+
+  <div id="sidebarWrapper" class="fixed inset-y-0 left-0 w-64 bg-slate-900 text-slate-200 transform -translate-x-full sm:translate-x-0 transition-transform duration-300 z-50">
+    <aside class="flex flex-col h-full border-r border-gray-200">
+      <div class="p-6 text-2xl font-bold border-b border-gray-700">
+        ClientDash
+      </div>
+      <nav class="flex flex-col mt-6 space-y-1 flex-1 overflow-y-auto">
+        <a href="client-dash.html" class="flex items-center px-6 py-3 text-slate-300 hover:bg-slate-800 rounded-r-md">
+          <i data-feather="home" class="w-5 h-5 mr-3"></i>
+          Dashboard
+        </a>
+        <a href="C-Messages.html" class="flex items-center px-6 py-3 text-slate-300 hover:bg-slate-800 rounded-r-md">
+          <i data-feather="message-circle" class="w-5 h-5 mr-3"></i>
+          Messages
+        </a>
+        <a href="C-Uploads.html" class="flex items-center px-6 py-3 bg-primary text-white font-semibold rounded-r-md">
+          <i data-feather="upload" class="w-5 h-5 mr-3"></i>
+          Uploads
+        </a>
+        <a href="C-Test.html" class="flex items-center px-6 py-3 text-slate-300 hover:bg-slate-800 rounded-r-md">
+          <i data-feather="globe" class="w-5 h-5 mr-3"></i>
+          Test Site
+        </a>
+        <a href="C-Payments.html" class="flex items-center px-6 py-3 text-slate-300 hover:bg-slate-800 rounded-r-md">
+          <i data-feather="credit-card" class="w-5 h-5 mr-3"></i>
+          Payments
+        </a>
+      </nav>
+      <div class="p-6 border-t border-gray-700">
+        <button id="logoutBtn" class="w-full px-4 py-2 bg-red-600 hover:bg-red-700 rounded text-white font-semibold">Logout</button>
+      </div>
+    </aside>
+  </div>
+  <div class="flex-1 p-6 overflow-auto space-y-6 sm:ml-64">
+
+    <!-- Header -->
+    <header class="flex items-center justify-between border-b border-gray-300 pb-4">
+      <div>
+        <h1 class="text-2xl font-semibold text-gray-900">John Doe</h1>
+        <p class="text-sm text-gray-600">Plan: Premium</p>
+      </div>
+    </header>
+
+    <!-- Upload area -->
+    <section>
+      <label for="file-upload" class="block mb-2 text-gray-700 font-medium">Upload Files</label>
+      <div id="drop-area" class="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-10 text-center cursor-pointer hover:border-primary transition-colors">
+        <svg class="mx-auto mb-3 h-12 w-12 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13m0 0l-4-4m4 4l4-4m6 7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7"/></svg>
+        <p class="text-gray-600 mb-2">Drag & drop files here or click to select files</p>
+        <input id="file-upload" type="file" multiple class="hidden" />
+      </div>
+      <button id="upload-btn" class="mt-4 px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark transition-colors" type="button">Upload Files</button>
+    </section>
+
+    <!-- Uploaded files list -->
+    <section>
+      <h2 class="text-lg font-semibold mb-3">Uploaded Files</h2>
+      <div class="overflow-x-auto">
+        <table class="min-w-full bg-white rounded shadow">
+          <thead>
+            <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+              <th class="py-3 px-6 text-left">Filename</th>
+              <th class="py-3 px-6 text-left">Date</th>
+              <th class="py-3 px-6 text-left">Status</th>
+            </tr>
+          </thead>
+          <tbody id="files-list" class="text-gray-700 text-sm">
+            <tr class="border-b border-gray-200 hover:bg-gray-50">
+              <td class="py-3 px-6">example-document.pdf</td>
+              <td class="py-3 px-6">2024-06-01</td>
+              <td class="py-3 px-6 text-green-600 font-medium">Uploaded</td>
+            </tr>
+            <tr class="border-b border-gray-200 hover:bg-gray-50">
+              <td class="py-3 px-6">photo.png</td>
+              <td class="py-3 px-6">2024-05-28</td>
+              <td class="py-3 px-6 text-green-600 font-medium">Uploaded</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+  <style>
+    :root {
+      --primary: #3b82f6;
+    }
+    .bg-primary { background-color: var(--primary); }
+    .text-primary { color: var(--primary); }
+    .hover\:bg-primary-dark:hover { background-color: #2563eb; }
+  </style>
+
+  <script>
+        document.addEventListener('click', (event) => {
+      const isClickInsideSidebar = sidebarWrapper.contains(event.target);
+      const isClickOnHamburger = mobileMenuBtn.contains(event.target);
+
+      // Only close sidebar if click is outside sidebar and hamburger, and sidebar is open
+      if (!isClickInsideSidebar && !isClickOnHamburger && !sidebarWrapper.classList.contains('-translate-x-full')) {
+        sidebarWrapper.classList.add('-translate-x-full');
+      }
+    });
+
+    const dropArea = document.getElementById('drop-area');
+    const fileInput = document.getElementById('file-upload');
+    const filesList = document.getElementById('files-list');
+    const uploadBtn = document.getElementById('upload-btn');
+
+    // Prevent default drag behaviors
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      dropArea.addEventListener(eventName, preventDefaults, false);
+      document.body.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    // Highlight drop area when item is dragged over it
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropArea.addEventListener(eventName, () => dropArea.classList.add('border-primary'), false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropArea.addEventListener(eventName, () => dropArea.classList.remove('border-primary'), false);
+    });
+
+    dropArea.addEventListener('click', () => fileInput.click());
+
+    dropArea.addEventListener('drop', handleDrop, false);
+    fileInput.addEventListener('change', handleFiles, false);
+    uploadBtn.addEventListener('click', mockUpload, false);
+
+    let selectedFiles = [];
+
+    function handleDrop(e) {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      handleFiles({ target: { files } });
+    }
+
+    function handleFiles(e) {
+      const files = e.target.files;
+      for (let i = 0; i < files.length; i++) {
+        selectedFiles.push(files[i]);
+      }
+      updateFilesList();
+    }
+
+    function updateFilesList() {
+      // Clear current list except placeholder uploaded files
+      // We'll keep the placeholder rows and append new ones after
+      // So we keep first two rows, then append new files after
+      // But for simplicity, let's just append new files after existing rows
+
+      // Remove all dynamically added rows (those with data-new attribute)
+      const dynamicRows = filesList.querySelectorAll('tr[data-new="true"]');
+      dynamicRows.forEach(row => row.remove());
+
+      selectedFiles.forEach(file => {
+        const tr = document.createElement('tr');
+        tr.setAttribute('data-new', 'true');
+        tr.className = 'border-b border-gray-200 hover:bg-gray-50';
+        const date = new Date().toISOString().split('T')[0];
+        tr.innerHTML = `
+          <td class="py-3 px-6">${file.name}</td>
+          <td class="py-3 px-6">${date}</td>
+          <td class="py-3 px-6 text-yellow-600 font-medium">Ready to upload</td>
+        `;
+        filesList.appendChild(tr);
+      });
+    }
+
+    function mockUpload() {
+      if(selectedFiles.length === 0) {
+        alert('Please select files to upload.');
+        return;
+      }
+      // Simulate upload success
+      selectedFiles.forEach(file => {
+        // Find the row for the file and update status
+        const rows = filesList.querySelectorAll('tr[data-new="true"]');
+        rows.forEach(row => {
+          if(row.firstElementChild.textContent === file.name) {
+            row.children[2].textContent = 'Uploaded';
+            row.children[2].classList.remove('text-yellow-600');
+            row.children[2].classList.add('text-green-600');
+          }
+        });
+      });
+      selectedFiles = [];
+      fileInput.value = '';
+      alert('Files uploaded successfully (mock).');
+    }
+
+    // Sidebar toggle and logout
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const sidebarWrapper = document.getElementById('sidebarWrapper');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    mobileMenuBtn.addEventListener('click', () => {
+      sidebarWrapper.classList.toggle('-translate-x-full');
+    });
+
+    logoutBtn.addEventListener('click', () => {
+      alert('Logging out...');
+      // Add logout logic here
+    });
+  </script>
+<script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+<script>
+  feather.replace();
+</script>
+</body>
+</html>

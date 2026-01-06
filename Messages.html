@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Service Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#1e40af',
+                        accent: '#60a5fa',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-dark text-white flex flex-col">
+            <div class="p-4 border-b border-gray-700">
+                <h1 class="text-xl font-bold">Login Dashboard</h1>
+                <p class="text-sm text-gray-400">Admin Panel</p>
+            </div>
+            
+            <nav class="flex-1 py-4">
+                <a href="admin-dash.html" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700">
+                    <i class="fas fa-home mr-3"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="Clients.html" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700">
+                    <i class="fas fa-users mr-3"></i>
+                    <span>Clients</span>
+                </a>
+                <a href="Projects.html" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700">
+                    <i class="fas fa-chart-bar mr-3"></i>
+                    <span>Projects</span>
+                </a>
+                <a href="Messages.html" class="flex items-center px-4 py-3 bg-primary text-white">
+                    <i class="fas fa-cog mr-3"></i>
+                    <span>Messages</span>
+                </a>
+                <a href="Payments.html" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700">
+                    <i class="fas fa-shield-alt mr-3"></i>
+                    <span>Payments</span>
+                </a>
+                <a href="Settings.html" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700">
+                    <i class="fas fa-cog mr-3"></i>
+                    <span>Settings</span>
+                </a>
+                <a href="Security.html" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700">
+                    <i class="fas fa-shield-alt mr-3"></i>
+                    <span>Security</span>
+                </a>
+            </nav>
+            
+            <div class="p-4 border-t border-gray-700">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-accent flex items-center justify-center">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="font-medium">Admin User</p>
+                        <p class="text-xs text-gray-400">admin@example.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex-1 p-6 overflow-auto flex gap-6">
+            <!-- Threads List -->
+            <div class="w-1/3 bg-white rounded-lg shadow flex flex-col">
+                <div class="p-4 border-b border-gray-200">
+                    <input type="text" placeholder="Search threads..." class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary" />
+                </div>
+                <div id="threadsList" class="flex-1 overflow-y-auto">
+                    <div class="p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-100 flex flex-col">
+                        <div class="flex justify-between items-center">
+                            <span class="font-semibold text-indigo-600">Premium Client</span>
+                            <span class="text-xs text-gray-400">2h ago</span>
+                        </div>
+                        <p class="text-sm text-gray-600 truncate">Last message preview from premium client...</p>
+                    </div>
+                    <div class="p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-100 flex flex-col">
+                        <div class="flex justify-between items-center">
+                            <span class="font-semibold">Regular Client</span>
+                            <span class="text-xs text-gray-400">1d ago</span>
+                        </div>
+                        <p class="text-sm text-gray-600 truncate">Last message preview from regular client...</p>
+                    </div>
+                    <div class="p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-100 flex flex-col">
+                        <div class="flex justify-between items-center">
+                            <span class="font-semibold">Regular Client</span>
+                            <span class="text-xs text-gray-400">3d ago</span>
+                        </div>
+                        <p class="text-sm text-gray-600 truncate">Another message preview from a client...</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Chat Window -->
+            <div class="flex-1 bg-white rounded-lg shadow flex flex-col">
+                <div id="chatHeader" class="p-4 border-b border-gray-200 font-semibold text-lg">Chat with Client</div>
+                <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-4">
+                    <div class="flex justify-start">
+                        <div class="bg-gray-200 text-gray-800 rounded-lg px-4 py-2 max-w-xs">
+                            Hello, I need help with my project.
+                        </div>
+                    </div>
+                    <div class="flex justify-end">
+                        <div class="bg-primary text-white rounded-lg px-4 py-2 max-w-xs">
+                            Sure! How can I assist you today?
+                        </div>
+                    </div>
+                    <div class="flex justify-start">
+                        <div class="bg-gray-200 text-gray-800 rounded-lg px-4 py-2 max-w-xs">
+                            I am having trouble with the login integration.
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 border-t border-gray-200">
+                    <form class="flex gap-4">
+                        <input type="text" placeholder="Type a message..." class="flex-1 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary" />
+                        <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-indigo-700">
+                            Send
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+<script>
+    const threads = [
+        {
+            clientName: "Alice Johnson",
+            priority: "Premium",
+            lastMessage: "Could you update the project timeline?",
+            timestamp: "1h ago",
+            messages: [
+                { text: "Hi, can you update the project timeline?", sender: "client" },
+                { text: "Sure, I'll get on it right away.", sender: "admin" },
+                { text: "Thanks!", sender: "client" }
+            ]
+        },
+        {
+            clientName: "Bob Smith",
+            priority: "Regular",
+            lastMessage: "Thanks for the quick response!",
+            timestamp: "3h ago",
+            messages: [
+                { text: "Thanks for the quick response!", sender: "client" },
+                { text: "You're welcome! Let me know if you need anything else.", sender: "admin" }
+            ]
+        },
+        {
+            clientName: "Carol White",
+            priority: "Premium",
+            lastMessage: "When can we schedule the next meeting?",
+            timestamp: "2d ago",
+            messages: [
+                { text: "When can we schedule the next meeting?", sender: "client" },
+                { text: "How about tomorrow afternoon?", sender: "admin" },
+                { text: "That works for me.", sender: "client" }
+            ]
+        },
+        {
+            clientName: "David Brown",
+            priority: "Regular",
+            lastMessage: "I have sent the documents you requested.",
+            timestamp: "5d ago",
+            messages: [
+                { text: "I have sent the documents you requested.", sender: "client" },
+                { text: "Received them, thanks!", sender: "admin" }
+            ]
+        }
+    ];
+
+    // Sort threads: Premium clients first
+    threads.sort((a, b) => {
+        if (a.priority === b.priority) return 0;
+        if (a.priority === "Premium") return -1;
+        return 1;
+    });
+
+    const threadsList = document.getElementById("threadsList");
+    const chatMessages = document.getElementById("chatMessages");
+    const chatHeader = document.getElementById("chatHeader");
+
+    threadsList.innerHTML = "";
+
+    function renderMessages(messages) {
+        chatMessages.innerHTML = "";
+        messages.forEach(message => {
+            const messageDiv = document.createElement("div");
+            messageDiv.className = message.sender === "admin" ? "flex justify-end" : "flex justify-start";
+
+            const bubbleDiv = document.createElement("div");
+            if(message.sender === "admin") {
+                bubbleDiv.className = "bg-primary text-white rounded-lg px-4 py-2 max-w-xs";
+            } else {
+                bubbleDiv.className = "bg-gray-200 text-gray-800 rounded-lg px-4 py-2 max-w-xs";
+            }
+            bubbleDiv.textContent = message.text;
+
+            messageDiv.appendChild(bubbleDiv);
+            chatMessages.appendChild(messageDiv);
+        });
+    }
+
+    threads.forEach((thread, index) => {
+        const threadDiv = document.createElement("div");
+        threadDiv.className = "p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-100 flex flex-col";
+
+        const headerDiv = document.createElement("div");
+        headerDiv.className = "flex justify-between items-center";
+
+        const nameSpan = document.createElement("span");
+        nameSpan.className = "font-semibold";
+        if(thread.priority === "Premium") {
+            nameSpan.classList.add("text-purple-600");
+        }
+        nameSpan.textContent = thread.clientName;
+
+        const timeSpan = document.createElement("span");
+        timeSpan.className = "text-xs text-gray-400";
+        timeSpan.textContent = thread.timestamp;
+
+        headerDiv.appendChild(nameSpan);
+        headerDiv.appendChild(timeSpan);
+
+        const messageP = document.createElement("p");
+        messageP.className = "text-sm text-gray-600 truncate";
+        messageP.textContent = thread.lastMessage;
+
+        threadDiv.appendChild(headerDiv);
+        threadDiv.appendChild(messageP);
+
+        threadDiv.addEventListener("click", () => {
+            chatHeader.textContent = `Chat with ${thread.clientName}`;
+            renderMessages(thread.messages);
+        });
+
+        threadsList.appendChild(threadDiv);
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-100">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Client Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body class="h-full flex bg-slate-50 text-slate-800 font-sans">
+  <button id="mobileMenuBtn" class="sm:hidden fixed top-4 left-4 z-50 p-2 text-slate-700 bg-slate-100 rounded-md" aria-label="Toggle sidebar menu">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" 
+      stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+  </button>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+    
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCmACuB6COC6welNT7uN5aX4BXYVL-OEF8",
+      authDomain: "tophers-design.firebaseapp.com",
+      projectId: "tophers-design",
+      storageBucket: "tophers-design.firebasestorage.app",
+      messagingSenderId: "163525514090",
+      appId: "1:163525514090:web:180497723fe8b8f5694b13"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    
+    // Auth state guard
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.replace("/login.html");
+        return;
+      }
+    
+      console.log("Authenticated:", user.uid);
+    
+      // Fetch user data and populate dashboard
+      const docRef = doc(db, "clients", user.uid);
+      try {
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          const headerName = document.querySelector('h1');
+          if (headerName) headerName.textContent = `Welcome, ${data.name}`;
+          const planTierSpan = document.querySelector('.text-primary');
+          if (planTierSpan) planTierSpan.textContent = data.planTier;
+          // Add additional dashboard stats here if needed
+        } else {
+          console.log("No user data found!");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    });
+    </script>
+
+  <!-- Sidebar -->
+  <div id="sidebarWrapper" class="fixed inset-y-0 left-0 w-64 bg-slate-900 text-slate-200 transform -translate-x-full sm:translate-x-0 transition-transform duration-300 z-50">
+    <aside class="flex flex-col h-full min-h-screen text-slate-200 w-64 bg-slate-900 border-r border-slate-800">
+      <div class="p-6 text-2xl font-bold border-b border-slate-800 text-white">
+        ClientDash
+      </div>
+      <nav class="flex flex-col mt-6 space-y-1 flex-1">
+        <a href="client-dash.html" class="flex items-center px-6 py-3 text-white bg-blue-600 font-semibold rounded-r-md">
+          <i data-feather="home" class="w-5 h-5 mr-3"></i>
+          Dashboard
+        </a>
+        <a href="C-Messages.html" class="flex items-center px-6 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-r-md">
+          <i data-feather="message-circle" class="w-5 h-5 mr-3"></i>
+          Messages
+        </a>
+        <a href="C-Uploads.html" class="flex items-center px-6 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-r-md">
+          <i data-feather="upload" class="w-5 h-5 mr-3"></i>
+          Uploads
+        </a>
+        <a href="C-Test.html" class="flex items-center px-6 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-r-md">
+          <i data-feather="globe" class="w-5 h-5 mr-3"></i>
+          Test Site
+        </a>
+        <a href="C-Payments.html" class="flex items-center px-6 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-r-md">
+          <i data-feather="credit-card" class="w-5 h-5 mr-3"></i>
+          Payments
+        </a>
+      </nav>
+      <div class="mt-auto p-6 border-t border-slate-800">
+        <button id="logoutBtn" class="w-full px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">Logout</button>
+      </div>
+    </aside>
+  </div>
+
+
+  <!-- Main content -->
+  <div class="flex-1 p-6 overflow-auto space-y-6 bg-slate-50 sm:ml-64 pt-12 sm:pt-6">
+
+    <!-- Header -->
+    <header class="flex items-center justify-between border-b border-slate-200 pb-4">
+      <div>
+        <h1 class="text-3xl font-bold">Welcome, Jane Doe</h1>
+        <p class="text-gray-600">Plan Tier: <span class="font-semibold text-primary">Pro</span></p>
+      </div>
+    </header>
+
+    <!-- Stats Cards -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+      <div class="bg-white rounded-lg shadow-sm p-5 flex flex-col">
+        <p class="text-sm font-medium text-slate-500">Active Projects</p>
+        <p class="mt-2 text-3xl font-semibold">5</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-sm p-5 flex flex-col">
+        <p class="text-sm font-medium text-slate-500">Messages</p>
+        <p class="mt-2 text-3xl font-semibold">12</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-sm p-5 flex flex-col">
+        <p class="text-sm font-medium text-slate-500">Files Uploaded</p>
+        <p class="mt-2 text-3xl font-semibold">34</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-sm p-5 flex flex-col">
+        <p class="text-sm font-medium text-slate-500">Plan Tier</p>
+        <p class="mt-2 text-3xl font-semibold text-primary">Pro</p>
+      </div>
+    </section>
+
+    <!-- Project Progress Section -->
+    <section class="bg-white rounded-lg shadow-sm p-6 space-y-4">
+      <h2 class="text-xl font-semibold border-b border-gray-200 pb-2">Project Progress</h2>
+      <div class="space-y-4">
+        <div>
+          <div class="flex justify-between mb-1">
+            <span class="text-sm font-medium text-gray-700">Website Redesign</span>
+            <span class="text-sm font-medium text-gray-700">70%</span>
+          </div>
+          <progress max="100" value="70" class="w-full h-3 rounded bg-gray-200 overflow-hidden">
+            70%
+          </progress>
+        </div>
+        <div>
+          <div class="flex justify-between mb-1">
+            <span class="text-sm font-medium text-gray-700">Marketing Campaign</span>
+            <span class="text-sm font-medium text-gray-700">45%</span>
+          </div>
+          <progress max="100" value="45" class="w-full h-3 rounded bg-gray-200 overflow-hidden">
+            45%
+          </progress>
+        </div>
+        <div>
+          <div class="flex justify-between mb-1">
+            <span class="text-sm font-medium text-gray-700">App Development</span>
+            <span class="text-sm font-medium text-gray-700">85%</span>
+          </div>
+          <progress max="100" value="85" class="w-full h-3 rounded bg-gray-200 overflow-hidden">
+            85%
+          </progress>
+        </div>
+      </div>
+    </section>
+
+    <!-- Test Site Section -->
+    <section class="bg-white rounded-lg shadow-sm p-6 flex flex-col sm:flex-row sm:items-center justify-between space-y-4 sm:space-y-0">
+      <div>
+        <h2 class="text-xl font-semibold mb-2">Test Site</h2>
+        <span class="inline-block px-3 py-1 text-sm font-semibold rounded-full bg-emerald-100 text-emerald-700">Online</span>
+      </div>
+      <a href="#" class="inline-block px-6 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary-dark transition-colors text-center">View Test Site</a>
+    </section>
+
+    <!-- Messages Section -->
+    <section class="bg-white rounded-lg shadow-sm p-6 space-y-4 max-w-4xl">
+      <h2 class="text-xl font-semibold border-b border-gray-200 pb-2">Messages</h2>
+      <div class="space-y-4 max-h-64 overflow-y-auto">
+        <div class="flex space-x-3">
+          <div class="flex-shrink-0">
+            <div class="w-10 h-10 rounded-full bg-slate-300 flex items-center justify-center font-semibold text-gray-700">A</div>
+          </div>
+          <div>
+            <div class="bg-slate-100 rounded-lg px-4 py-2 text-gray-800 max-w-md">Hi Jane, your project is progressing well!</div>
+            <span class="text-xs text-gray-500">Admin • 10:15 AM</span>
+          </div>
+        </div>
+        <div class="flex space-x-3 justify-end">
+          <div>
+            <div class="bg-blue-600 text-white rounded-lg px-4 py-2 max-w-md text-right">Thanks! Looking forward to the next update.</div>
+            <span class="text-xs text-gray-500 block">You • 10:17 AM</span>
+          </div>
+          <div class="flex-shrink-0">
+            <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center font-semibold text-white">J</div>
+          </div>
+        </div>
+        <div class="flex space-x-3">
+          <div class="flex-shrink-0">
+            <div class="w-10 h-10 rounded-full bg-slate-300 flex items-center justify-center font-semibold text-gray-700">A</div>
+          </div>
+          <div>
+            <div class="bg-slate-100 rounded-lg px-4 py-2 text-gray-800 max-w-md">Please review the latest files uploaded.</div>
+            <span class="text-xs text-gray-500">Admin • 11:00 AM</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- File Upload Area -->
+    <section class="bg-white rounded-lg shadow-sm p-6 max-w-4xl">
+      <h2 class="text-xl font-semibold border-b border-gray-200 pb-2 mb-4">Upload Files</h2>
+      <label for="file-upload" class="flex flex-col items-center justify-center border-2 border-dashed border-slate-300 rounded-lg p-12 cursor-pointer hover:border-primary transition-colors text-slate-500">
+        <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" 
+          stroke-linecap="round" stroke-linejoin="round"><path d="M7 16v4h10v-4M12 12v8m0-8l-4 4m4-4l4 4M16 8l-4-4-4 4"/></svg>
+        <span class="text-sm">Drag and drop files here or click to upload</span>
+        <input id="file-upload" type="file" multiple class="hidden" />
+      </label>
+    </section>
+
+  </div>
+
+  <style>
+    
+    :root {
+      --primary: #2563eb;
+    }
+    .bg-primary { background-color: var(--primary); }
+    .text-primary { color: var(--primary); }
+    .hover\:bg-primary-dark:hover { background-color: #2563eb; }
+  </style>
+  <script>
+    feather.replace();
+  </script>
+  <script>
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const sidebarWrapper = document.getElementById('sidebarWrapper');
+
+    mobileMenuBtn.addEventListener('click', () => {
+      sidebarWrapper.classList.toggle('-translate-x-full');
+    });
+  </script>
+<script>
+      document.addEventListener('click', (event) => {
+      const isClickInsideSidebar = sidebarWrapper.contains(event.target);
+      const isClickOnHamburger = mobileMenuBtn.contains(event.target);
+
+      // Only close sidebar if click is outside sidebar and hamburger, and sidebar is open
+      if (!isClickInsideSidebar && !isClickOnHamburger && !sidebarWrapper.classList.contains('-translate-x-full')) {
+        sidebarWrapper.classList.add('-translate-x-full');
+      }
+    });
+
+  let mobileMenuTimeout;
+  window.addEventListener('scroll', () => {
+    mobileMenuBtn.classList.remove('opacity-0');
+    mobileMenuBtn.classList.add('opacity-100', 'transition-opacity', 'duration-300');
+
+    clearTimeout(mobileMenuTimeout);
+    mobileMenuTimeout = setTimeout(() => {
+      mobileMenuBtn.classList.remove('opacity-100');
+      mobileMenuBtn.classList.add('opacity-0', 'transition-opacity', 'duration-300');
+    }, 3000);
+  });
+    // Logout logic
+    const logoutBtn = document.getElementById("logoutBtn");
+  logoutBtn.addEventListener("click", async () => {
+    try {
+      await signOut(auth);
+      window.location.replace("/client-loggin.html");
+    } catch (err) {
+      console.error("Error signing out:", err);
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Service Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#1e40af',
+                        accent: '#60a5fa',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-dark text-white flex flex-col">
+            <div class="p-4 border-b border-gray-700">
+                <h1 class="text-xl font-bold">Login Dashboard</h1>
+                <p class="text-sm text-gray-400">Admin Panel</p>
+            </div>
+            
+            <nav class="flex-1 py-4">
+                <a href="admin-dash.html" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700">
+                    <i class="fas fa-home mr-3"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="Clients.html" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700">
+                    <i class="fas fa-users mr-3"></i>
+                    <span>Clients</span>
+                </a>
+                <a href="Projects.html" class="flex items-center px-4 py-3 bg-primary text-white">
+                    <i class="fas fa-chart-bar mr-3"></i>
+                    <span>Projects</span>
+                </a>
+                <a href="Messages.html" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700">
+                    <i class="fas fa-cog mr-3"></i>
+                    <span>Messages</span>
+                </a>
+                <a href="Payments.html" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700">
+                    <i class="fas fa-shield-alt mr-3"></i>
+                    <span>Payments</span>
+                </a>
+                <a href="Settings.html" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700">
+                    <i class="fas fa-cog mr-3"></i>
+                    <span>Settings</span>
+                </a>
+                <a href="Security.html" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700">
+                    <i class="fas fa-shield-alt mr-3"></i>
+                    <span>Security</span>
+                </a>
+            </nav>
+            
+            <div class="p-4 border-t border-gray-700">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-accent flex items-center justify-center">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="font-medium">Admin User</p>
+                        <p class="text-xs text-gray-400">admin@example.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-1 p-6 overflow-auto">
+            <h2 class="text-2xl font-semibold mb-6">Projects</h2>
+
+            <div class="flex flex-col md:flex-row md:items-center md:space-x-4 mb-6 space-y-4 md:space-y-0">
+                <input type="text" placeholder="Search projects..." class="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                <select class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                    <option value="">Filter by Project Name</option>
+                    <option>Project Alpha</option>
+                    <option>Project Beta</option>
+                    <option>Project Gamma</option>
+                </select>
+                <select class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                    <option value="">Filter by Client</option>
+                    <option>Client A</option>
+                    <option>Client B</option>
+                    <option>Client C</option>
+                </select>
+                <select class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                    <option value="">Filter by Status</option>
+                    <option>Active</option>
+                    <option>Pending</option>
+                    <option>Completed</option>
+                </select>
+            </div>
+
+            <div class="overflow-x-auto bg-white rounded-lg shadow">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project Name</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plan</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progress</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Messages</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Files</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Project Alpha</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Client A</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Basic</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="w-full bg-gray-200 rounded-full h-4">
+                                    <div class="bg-primary h-4 rounded-full" style="width: 70%;"></div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">2024-07-15</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center text-gray-700"><i class="fas fa-comments"></i> 12</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center text-gray-700"><i class="fas fa-file-alt"></i> 8</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <button class="text-blue-600 hover:text-blue-900 mr-2"><i class="fas fa-edit"></i></button>
+                                <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Project Beta</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Client B</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Premium</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="w-full bg-gray-200 rounded-full h-4">
+                                    <div class="bg-primary h-4 rounded-full" style="width: 40%;"></div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">2024-08-01</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center text-gray-700"><i class="fas fa-comments"></i> 5</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center text-gray-700"><i class="fas fa-file-alt"></i> 3</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <button class="text-blue-600 hover:text-blue-900 mr-2"><i class="fas fa-edit"></i></button>
+                                <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Project Gamma</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Client C</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Enterprise</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Completed</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="w-full bg-gray-200 rounded-full h-4">
+                                    <div class="bg-primary h-4 rounded-full" style="width: 100%;"></div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">2024-06-30</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center text-gray-700"><i class="fas fa-comments"></i> 20</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center text-gray-700"><i class="fas fa-file-alt"></i> 15</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <button class="text-blue-600 hover:text-blue-900 mr-2"><i class="fas fa-edit"></i></button>
+                                <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-4 flex justify-between items-center">
+                <div class="text-sm text-gray-700">
+                    Showing <span class="font-medium">1</span> to <span class="font-medium">3</span> of <span class="font-medium">3</span> results
+                </div>
+                <nav class="inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                    <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                        <span class="sr-only">Previous</span>
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                    <a href="#" aria-current="page" class="z-10 bg-primary border-primary text-white relative inline-flex items-center px-4 py-2 border text-sm font-medium">1</a>
+                    <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">2</a>
+                    <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 hidden md:inline-flex relative items-center px-4 py-2 border text-sm font-medium">3</a>
+                    <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                        <span class="sr-only">Next</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </nav>
+            </div>
+        </div>
