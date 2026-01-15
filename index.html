@@ -271,7 +271,7 @@
                     </ul>
             
                     <!-- Button -->
-                    <button class="w-full bg-primary hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-lg transition">
+                    <button onclick="goToSignup()" class="w-full bg-primary hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-lg transition">
                         Get Started
                     </button>
                 </div>
@@ -324,9 +324,9 @@
         <span>4 Weeks Delivery</span>
     </li>
 </ul>
-                    <button class="w-full bg-primary hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-lg transition">
-                        Get Started
-                    </button>
+<button onclick="goToSignup()" class="w-full bg-primary hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-lg transition">
+    Get Started
+</button>
                 </div>
             </div>
 
@@ -380,7 +380,7 @@
                             <span>Custom Timeline</span>
                         </li>
                     </ul>
-                    <button id="services" class="w-full bg-primary hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-lg transition">
+                    <button onclick="goToSignup()" class="w-full bg-primary hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-lg transition">
                         Get Started
                     </button>
                 </div>
@@ -464,6 +464,10 @@
     <script src="components/footer.js"></script>
     <script src="/javascripy/script.js" defer></script>
     <script>
+            function goToSignup() {
+    // Use a query param to indicate the user came from a pricing button
+    window.location.href = '/client-signup.html?from=pricing';
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
@@ -490,6 +494,8 @@ document.addEventListener('DOMContentLoaded', () => {
             navLinks.classList.remove('hidden');
         }
     });
+
+
 
     // Activate feather icons
     feather.replace();

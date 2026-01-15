@@ -27,20 +27,45 @@
       display: flex;
       flex-direction: column;
     }
+    .nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Logo left, button right */
+  background: #151922; /* matches your panel color */
+  border-bottom: 1px solid #23283a;
+  padding: 16px 24px;
+  height: 60px;
+}
 
-    nav {
-      height: 60px;
-      display: flex;
-      align-items: center;
-      padding: 0 24px;
-      border-bottom: 1px solid var(--border);
-      background: var(--panel);
-    }
+.nav .logo {
+  color: #fff;
+  font-weight: 600;
+  font-size: 1.125rem; /* 18px */
+  letter-spacing: 0.5px;
+}
 
-    nav .logo {
-      font-weight: 600;
-      letter-spacing: 0.5px;
-    }
+.nav .home-button {
+  background: #4f8cff;
+  color: #fff;
+  padding: 8px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+
+.nav .home-button:hover {
+  background: #3e73e6;
+}
+
+.nav .home-icon {
+  width: 20px;
+  height: 20px;
+}
+
+
 
     main {
       flex: 1;
@@ -153,12 +178,41 @@
       border-color: var(--accent);
     }
   </style>
+  <script>function goToSignup() {
+    // Use a query param to indicate the user came from a pricing button
+    window.location.href = '/client-signup.html?from=pricing';
+}</script>
 </head>
 <body>
-  <nav>
+  <nav class="nav">
+    <!-- Logo -->
     <div class="logo">Client SignUp</div>
+  
+    <!-- Home Button -->
+    <a href="index.html" title="Home" class="home-button">
+      <i data-feather="home" class="home-icon"></i>
+    </a>
   </nav>
-
+  <div id="pricingPopup" style="
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent);
+  color: #fff;
+  padding: 14px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  z-index: 1000;
+  max-width: 90%;
+  text-align: center;
+  font-size: 14px;
+">
+  You'll make an account and I'll contact you as soon as possible.
+</div>
   <main>
     <div class="login-card">
       <h1>Sign Up</h1>
@@ -295,5 +349,32 @@
       }
     });
   </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const fromPricing = urlParams.get('from');
+    
+        if (fromPricing === 'pricing') {
+            const popup = document.getElementById('pricingPopup');
+            if (popup) {
+                // Fade in
+                popup.style.opacity = '1';
+                popup.style.pointerEvents = 'auto';
+    
+                // Fade out after 4 seconds
+                setTimeout(() => {
+                    popup.style.opacity = '0';
+                    popup.style.pointerEvents = 'none';
+                }, 7000);
+            }
+        }
+    });
+    
+    </script>
+<script src="https://unpkg.com/feather-icons"></script>
+<script>
+  feather.replace();
+</script>
 </body>
+
 </html>

@@ -28,19 +28,44 @@
       flex-direction: column;
     }
 
-    nav {
-      height: 60px;
-      display: flex;
-      align-items: center;
-      padding: 0 24px;
-      border-bottom: 1px solid var(--border);
-      background: var(--panel);
-    }
+    .nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Logo left, button right */
+  background: #151922; /* matches your panel color */
+  border-bottom: 1px solid #23283a;
+  padding: 16px 24px;
+  height: 60px;
+}
 
-    nav .logo {
-      font-weight: 600;
-      letter-spacing: 0.5px;
-    }
+.nav .logo {
+  color: #fff;
+  font-weight: 600;
+  font-size: 1.125rem; /* 18px */
+  letter-spacing: 0.5px;
+}
+
+.nav .home-button {
+  background: #4f8cff;
+  color: #fff;
+  padding: 8px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+
+.nav .home-button:hover {
+  background: #3e73e6;
+}
+
+.nav .home-icon {
+  width: 20px;
+  height: 20px;
+}
+
 
     main {
       flex: 1;
@@ -117,8 +142,14 @@
   </style>
 </head>
 <body>
-  <nav>
-    <div class="logo">Client Login</div>
+  <nav class="nav">
+    <!-- Logo -->
+    <div class="logo">Client SignUp</div>
+  
+    <!-- Home Button -->
+    <a href="index.html" title="Home" class="home-button">
+      <i data-feather="home" class="home-icon"></i>
+    </a>
   </nav>
 
   <main>
@@ -177,6 +208,10 @@
     document.getElementById("createAccountBtn").addEventListener("click", () => {
       window.location.href = "client-signup.html";
     });
+  </script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script>
+    feather.replace();
   </script>
 </body>
 </html>
