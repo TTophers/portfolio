@@ -160,67 +160,46 @@
     </div>
   </main>
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyCmACuB6COC6welNT7uN5aX4BXYVL-OEF8",
-      authDomain: "tophers-design.firebaseapp.com",
-      projectId: "tophers-design",
-      storageBucket: "tophers-design.firebasestorage.app",
-      messagingSenderId: "163525514090",
-      appId: "1:163525514090:web:180497723fe8b8f5694b13"
-    };
-    
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    
-    // Auth state guard
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        window.location.replace("client-loggin.html");
-        return;
-      }
-    
-      const userDocRef = doc(db, "users", user.uid);
-    
-      // Check if onboarding already completed
-      try {
-        const docSnap = await getDoc(userDocRef);
-        if (docSnap.exists() && docSnap.data().onboardingComplete) {
-          window.location.replace("client-dash.html");
-          return;
-        }
-      } catch (err) {
-        console.error("Error fetching user document:", err);
-      }
-    
-      // Attach form submit listener now that user exists
-      const form = document.getElementById("onboardingForm");
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-    
-        const business = document.getElementById("business").value.trim();
-        const notes = document.getElementById("notes").value.trim();
-        const phone = document.getElementById("phone").value.trim();
-    
-        try {
-          await updateDoc(userDocRef, {
-            business,
-            notes,
-            phone,
-            onboardingComplete: false
-          });
-          window.location.href = "client-dash.html";
-        } catch (error) {
-          console.error("Error updating document:", error);
-          alert("Failed to submit info. Please try again.");
-        }
-      });
-    });
-    </script>
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+const supabaseUrl = 'https://frnzvzlrchrqhxtuqezh.supabase.co';
+const supabaseKey = 'sb_publishable_ZZ0edRrWzAG_uoF5jEeh-w_iedDXCup';
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Check auth state
+const { data: { session } } = await supabase.auth.getSession();
+if (!session) {
+  window.location.replace('client-loggin.html');
+}
+
+// Reference to form
+const form = document.getElementById('onboardingForm');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const business = document.getElementById('business').value.trim();
+  const notes = document.getElementById('notes').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+
+  const userId = session.user.id;
+
+  // Update onboarding info in Supabase table (assume 'users' table)
+  const { error } = await supabase.from('users').update({
+    business,
+    notes,
+    phone,
+    onboardingComplete: true
+  }).eq('id', userId);
+
+  if (error) {
+    console.error('Error updating user:', error);
+    alert('Failed to submit info. Please try again.');
+    return;
+  }
+
+  window.location.href = 'client-dash.html';
+});
+</script>
 </body>
 </html>

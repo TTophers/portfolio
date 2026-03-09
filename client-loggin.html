@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login | Client</title>
+
   <style>
     :root {
       --bg: #0f1115;
@@ -29,43 +30,42 @@
     }
 
     .nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between; /* Logo left, button right */
-  background: #151922; /* matches your panel color */
-  border-bottom: 1px solid #23283a;
-  padding: 16px 24px;
-  height: 60px;
-}
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #151922;
+      border-bottom: 1px solid #23283a;
+      padding: 16px 24px;
+      height: 60px;
+    }
 
-.nav .logo {
-  color: #fff;
-  font-weight: 600;
-  font-size: 1.125rem; /* 18px */
-  letter-spacing: 0.5px;
-}
+    .logo {
+      color: #fff;
+      font-weight: 600;
+      font-size: 1.125rem;
+      letter-spacing: 0.5px;
+    }
 
-.nav .home-button {
-  background: #4f8cff;
-  color: #fff;
-  padding: 8px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  transition: background 0.3s;
-}
+    .home-button {
+      background: #4f8cff;
+      color: #fff;
+      padding: 8px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
 
-.nav .home-button:hover {
-  background: #3e73e6;
-}
+    .home-button:hover {
+      background: #3e73e6;
+    }
 
-.nav .home-icon {
-  width: 20px;
-  height: 20px;
-}
-
+    .home-icon {
+      width: 20px;
+      height: 20px;
+    }
 
     main {
       flex: 1;
@@ -133,85 +133,124 @@
       opacity: 0.9;
     }
 
+    .secondary {
+      margin-top: 10px;
+      background: #23283a;
+      border: 1px solid var(--border);
+    }
+
     .footer-text {
       margin-top: 16px;
       font-size: 12px;
       color: var(--muted);
       text-align: center;
     }
+
+    .error-message {
+      color: #ff6b6b;
+      font-size: 13px;
+      margin-top: -12px;
+      margin-bottom: 16px;
+      min-height: 18px;
+    }
   </style>
 </head>
+
 <body>
-  <nav class="nav">
-    <!-- Logo -->
-    <div class="logo">Client SignUp</div>
-  
-    <!-- Home Button -->
-    <a href="index.html" title="Home" class="home-button">
-      <i data-feather="home" class="home-icon"></i>
-    </a>
-  </nav>
 
-  <main>
-    <div class="login-card">
-      <h1>Sign In</h1>
+<nav class="nav">
+  <div class="logo">Client Login</div>
 
-      <form id="loginForm">
-        <label for="email">Email</label>
-        <input type="email" id="email" required />
+  <a href="index.html" title="Home" class="home-button">
+    <i data-feather="home" class="home-icon"></i>
+  </a>
+</nav>
 
-        <label for="password">Password</label>
-        <input type="password" id="password" required />
+<main>
+  <div class="login-card">
 
-        <button type="submit">Login</button>
-        <button type="button" id="createAccountBtn" style="margin-top:10px;background:#23283a;border:1px solid var(--border);">
-          Create Account
-        </button>
-      </form>
+    <h1>Sign In</h1>
 
-      <div class="footer-text">Protected system</div>
-    </div>
-  </main>
+    <form id="loginForm">
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+      <label for="email">Email</label>
+      <input type="email" id="email" required />
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCmACuB6COC6welNT7uN5aX4BXYVL-OEF8",
-      authDomain: "tophers-design.firebaseapp.com",
-      projectId: "tophers-design",
-      storageBucket: "tophers-design.firebasestorage.app",
-      messagingSenderId: "163525514090",
-      appId: "1:163525514090:web:180497723fe8b8f5694b13"
-    };
+      <label for="password">Password</label>
+      <input type="password" id="password" required />
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+      <div id="errorMessage" class="error-message"></div>
 
-    document.getElementById("loginForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
+      <button type="submit">Login</button>
 
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+      <button type="button" id="createAccountBtn" class="secondary">
+        Create Account
+      </button>
 
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-        window.location.href = "client-dash.html";
-      } catch (err) {
-        alert(err.message);
-      }
-    });
+    </form>
 
-    document.getElementById("createAccountBtn").addEventListener("click", () => {
-      window.location.href = "client-signup.html";
-    });
-  </script>
-  <script src="https://unpkg.com/feather-icons"></script>
-  <script>
-    feather.replace();
-  </script>
+    <div class="footer-text">Protected system</div>
+
+  </div>
+</main>
+
+<script type="module">
+
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+const supabaseUrl = "https://frnzvzlrchrqhxtuqezh.supabase.co";
+const supabaseKey = "sb_publishable_ZZ0edRrWzAG_uoF5jEeh-w_iedDXCup";
+
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+window.addEventListener('load', async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) {
+    window.location.href = "client-dash.html";
+  }
+});
+
+const form = document.getElementById("loginForm");
+const errorMessageDiv = document.getElementById("errorMessage");
+
+form.addEventListener("submit", async (e) => {
+
+  e.preventDefault();
+  errorMessageDiv.textContent = "";
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: email,
+    password: password
+  });
+
+  if (error) {
+    errorMessageDiv.textContent = error.message;
+    return;
+  }
+
+  window.location.href = "client-dash.html";
+
+});
+
+
+const createBtn = document.getElementById("createAccountBtn");
+
+createBtn.addEventListener("click", () => {
+
+  window.location.href = "client-signup.html";
+
+});
+
+</script>
+
+<script src="https://unpkg.com/feather-icons"></script>
+
+<script>
+feather.replace();
+</script>
+
 </body>
 </html>

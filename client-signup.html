@@ -248,29 +248,11 @@
   </main>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCmACuB6COC6welNT7uN5aX4BXYVL-OEF8",
-      authDomain: "tophers-design.firebaseapp.com",
-      projectId: "tophers-design",
-      storageBucket: "tophers-design.firebasestorage.app",
-      messagingSenderId: "163525514090",
-      appId: "1:163525514090:web:180497723fe8b8f5694b13"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    // Set Firebase Auth persistence to browserLocalPersistence
-    setPersistence(auth, browserLocalPersistence).catch((err) => {
-      // If persistence setting fails, show inline error
-      const formError = document.getElementById('formError');
-      formError.textContent = "Failed to set authentication persistence: " + err.message;
-    });
+    const supabaseUrl = 'https://frnzvzlrchrqhxtuqezh.supabase.co';
+    const supabaseKey = 'sb_publishable_ZZ0edRrWzAG_uoF5jEeh-w_iedDXCup';
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Website buttons toggle logic
     const websiteButtons = document.querySelectorAll('.website-buttons button');
@@ -322,30 +304,48 @@
       processingMessage.style.display = "block";
 
       try {
-        // Create user
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
+        // Sign up user with Supabase Auth
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: fullName
+            }
+          }
+        });
+
+        if (signUpError) {
+          throw signUpError;
+        }
+
+        if (!signUpData.user) {
+          throw new Error("Failed to create user.");
+        }
+
+        const userId = signUpData.user.id;
         const hasWebsite = websiteValue === "yes";
 
-        // Write Firestore
-        await setDoc(doc(db, "users", user.uid), {
-          role: "client",
+        // Insert user data into 'users' table
+        const { error: insertError } = await supabase.from('users').insert([{
+          id: userId,
+          role: 'client',
           name: fullName,
-          email,
-          hasWebsite,
-          createdAt: serverTimestamp()
-        });
+          email: email,
+          has_website: hasWebsite,
+          created_at: new Date().toISOString()
+        }]);
+
+        if (insertError) {
+          throw insertError;
+        }
 
         // Redirect to onboarding page
         window.location.replace("client-onboarding.html");
       } catch (err) {
-        console.error("Signup / Firestore error:", err);
-        formError.textContent = err.message;
-      } finally {
-        // Only hide processing message if not redirecting
-        setTimeout(() => {
-          processingMessage.style.display = "none";
-        }, 300);
+        console.error("Signup / Database error:", err);
+        formError.textContent = err.message || "An error occurred during signup.";
+        processingMessage.style.display = "none";
       }
     });
   </script>
