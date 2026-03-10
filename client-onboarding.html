@@ -166,10 +166,36 @@ const supabaseUrl = 'https://frnzvzlrchrqhxtuqezh.supabase.co';
 const supabaseKey = 'sb_publishable_ZZ0edRrWzAG_uoF5jEeh-w_iedDXCup';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Check auth state
+// Check auth state and get the current user session
 const { data: { session } } = await supabase.auth.getSession();
-if (!session) {
+
+if (!session || !session.user) {
   window.location.replace('client-loggin.html');
+}
+
+const userId = session.user.id;
+
+// Ensure a row exists in the same 'users' table created during signup
+const { data: existingUser, error: fetchError } = await supabase
+  .from('users')
+  .select('id')
+  .eq('id', userId)
+  .single();
+
+if (fetchError && fetchError.code !== 'PGRST116') {
+  console.error('User lookup error:', fetchError);
+}
+
+// If for some reason the row doesn't exist, create it so onboarding can update it
+if (!existingUser) {
+  const { error: insertError } = await supabase.from('users').insert({
+    id: userId,
+    role: 'client'
+  });
+
+  if (insertError) {
+    console.error('User row creation failed:', insertError);
+  }
 }
 
 // Reference to form
@@ -182,7 +208,7 @@ form.addEventListener('submit', async (e) => {
   const notes = document.getElementById('notes').value.trim();
   const phone = document.getElementById('phone').value.trim();
 
-  const userId = session.user.id;
+  // const userId = session.user.id;  <-- Removed this line
 
   // Update onboarding info in Supabase table (assume 'users' table)
   const { error } = await supabase.from('users').update({

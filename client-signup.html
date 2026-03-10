@@ -327,21 +327,30 @@
         const hasWebsite = websiteValue === "yes";
 
         // Insert user data into 'users' table
-        const { error: insertError } = await supabase.from('users').insert([{
-          id: userId,
-          role: 'client',
-          name: fullName,
-          email: email,
-          has_website: hasWebsite,
-          created_at: new Date().toISOString()
-        }]);
+        const { error: insertError } = await supabase
+          .from('users')
+          .insert({
+            id: userId,
+            role: 'client',
+            name: full_Name,
+            email: email,
+            has_website: hasWebsite,
+            created_at: new Date().toISOString()
+          });
 
         if (insertError) {
           throw insertError;
         }
 
-        // Redirect to onboarding page
-        window.location.replace("client-onboarding.html");
+        // Ensure a session exists before redirecting
+        const { data: sessionData } = await supabase.auth.getSession();
+
+        if (sessionData?.session) {
+          window.location.replace("client-onboarding.html");
+        } else {
+          formError.textContent = "Account created. Please log in to continue.";
+          processingMessage.style.display = "none";
+        }
       } catch (err) {
         console.error("Signup / Database error:", err);
         formError.textContent = err.message || "An error occurred during signup.";
