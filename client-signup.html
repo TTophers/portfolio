@@ -244,130 +244,125 @@
 
       <div id="processingMessage" style="color: var(--accent); margin-top: 8px; display: none;">Processing...</div>
 
-      <button class="signin-link" type="button" onclick="window.location.href='client-loggin.html'">Already have an account? Sign In</button>
+      <button class="signin-link" type="button" id="signinLink">Already have an account? Sign In</button>
 
       <div class="footer-text">Protected system</div>
     </div>
   </main>
-<!-- Load Supabase JS CDN first -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.35.0/dist/supabase.min.js"></script>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  // Supabase setup
-  const supabaseUrl = 'https://frnzvzlrchrqhxtuqezh.supabase.co';
-  const supabaseKey = 'sb_publishable_ZZ0edRrWzAG_uoF5jEeh-w_iedDXCup';
-  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
-  // DOM elements
-  const websiteButtons = document.querySelectorAll('.website-buttons button');
-  const websiteInput = document.getElementById('website');
-  const formError = document.getElementById('formError');
-  const processingMessage = document.getElementById('processingMessage');
-  const form = document.getElementById("loginForm");
-
-  // Handle Yes/No selection
-  websiteButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      websiteButtons.forEach(b => b.classList.remove('selected'));
-      button.classList.add('selected');
-      websiteInput.value = button.getAttribute('data-value');
-    });
-  });
-
-  // Form submission
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    formError.textContent = '';
-    processingMessage.style.display = 'block';
-    form.querySelector('button[type="submit"]').disabled = true;
-
-    const fullName = document.getElementById('fullname').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-    const websiteValue = websiteInput.value;
-
-    // Basic validation
-    if (!fullName || !email || !password || !websiteValue) {
-      formError.textContent = 'Please fill out all required fields.';
-      processingMessage.style.display = 'none';
-      form.querySelector('button[type="submit"]').disabled = false;
-      return;
-    }
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-      formError.textContent = 'Please enter a valid email address.';
-      processingMessage.style.display = 'none';
-      form.querySelector('button[type="submit"]').disabled = false;
-      return;
-    }
-    if (password.length < 6) {
-      formError.textContent = 'Password must be at least 6 characters.';
-      processingMessage.style.display = 'none';
-      form.querySelector('button[type="submit"]').disabled = false;
-      return;
-    }
-
-    try {
-      // Signup with Supabase
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: { full_name: fullName } }
-      });
-      if (signUpError) throw signUpError;
-      if (!signUpData.user) throw new Error('Failed to create user.');
-
-      const userId = signUpData.user.id;
-      const hasWebsite = websiteValue === 'yes';
-
-      // Insert into users table
-      const { error: insertError } = await supabase.from('users').insert({
-        id: userId,
-        role: 'client',
-        name: fullName,
-        email: email,
-        has_website: hasWebsite,
-        created_at: new Date().toISOString()
-      });
-      if (insertError) throw insertError;
-
-      // Get session and redirect
-      const { data: sessionData } = await supabase.auth.getSession();
-      if (sessionData?.session) {
-        window.location.replace('client-onboarding.html');
-      } else {
-        formError.textContent = 'Account created. Please log in to continue.';
-        processingMessage.style.display = 'none';
-        form.querySelector('button[type="submit"]').disabled = false;
-      }
-    } catch (err) {
-      console.error('Signup / Database error:', err);
-      formError.textContent = err.message || 'An error occurred during signup.';
-      processingMessage.style.display = 'none';
-      form.querySelector('button[type="submit"]').disabled = false;
-    }
-  });
-
-  // Pricing popup logic (unchanged)
-  const urlParams = new URLSearchParams(window.location.search);
-  const fromPricing = urlParams.get('from');
-  if (fromPricing === 'pricing') {
-    const popup = document.getElementById('pricingPopup');
-    if (popup) {
-      popup.style.opacity = '1';
-      popup.style.pointerEvents = 'auto';
-      setTimeout(() => {
-        popup.style.opacity = '0';
-        popup.style.pointerEvents = 'none';
-      }, 7000);
-    }
-  }
-});
-</script>
+<!-- Load Supabase JS CDN from unpkg (classic, non-ESM) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/supabase.min.js"></script>
 <script src="https://unpkg.com/feather-icons"></script>
 <script>
-  feather.replace();
+  document.addEventListener('DOMContentLoaded', () => {
+    feather.replace();
+
+    const supabaseUrl = 'https://frnzvzlrchrqhxtuqezh.supabase.co'
+    const supabaseKey = 'sb_publishable_ZZ0edRrWzAG_uoF5jEeh-w_iedDXCup'
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey)
+
+    const websiteButtons = document.querySelectorAll('.website-buttons button')
+    const websiteInput = document.getElementById('website')
+    const formError = document.getElementById('formError')
+    const processingMessage = document.getElementById('processingMessage')
+    const form = document.getElementById('loginForm')
+    const signinLink = document.getElementById('signinLink')
+
+    websiteButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        websiteButtons.forEach(b => b.classList.remove('selected'))
+        button.classList.add('selected')
+        websiteInput.value = button.getAttribute('data-value')
+        formError.textContent = ''
+      })
+    })
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault()
+      formError.textContent = ''
+      processingMessage.style.display = 'block'
+      form.querySelector('button[type="submit"]').disabled = true
+
+      const fullName = document.getElementById('fullname').value.trim()
+      const email = document.getElementById('email').value.trim()
+      const password = document.getElementById('password').value
+      const websiteValue = websiteInput.value
+
+      if (!fullName || !email || !password || !websiteValue) {
+        formError.textContent = 'Please fill out all required fields.'
+        processingMessage.style.display = 'none'
+        form.querySelector('button[type="submit"]').disabled = false
+        return
+      }
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailPattern.test(email)) {
+        formError.textContent = 'Please enter a valid email address.'
+        processingMessage.style.display = 'none'
+        form.querySelector('button[type="submit"]').disabled = false
+        return
+      }
+      if (password.length < 6) {
+        formError.textContent = 'Password must be at least 6 characters.'
+        processingMessage.style.display = 'none'
+        form.querySelector('button[type="submit"]').disabled = false
+        return
+      }
+
+      try {
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { data: { full_name: fullName } }
+        })
+        if (signUpError) throw signUpError
+        if (!signUpData.user) throw new Error('Failed to create user.')
+
+        const userId = signUpData.user.id
+        const hasWebsite = websiteValue === 'yes'
+
+        const { error: insertError } = await supabase.from('users').insert({
+          id: userId,
+          role: 'client',
+          name: fullName,
+          email: email,
+          has_website: hasWebsite,
+          created_at: new Date().toISOString()
+        })
+        if (insertError) throw insertError
+
+        const { data: sessionData } = await supabase.auth.getSession()
+        if (sessionData && sessionData.session) {
+          window.location.replace('client-onboarding.html')
+        } else {
+          formError.textContent = 'Account created. Please log in to continue.'
+          processingMessage.style.display = 'none'
+          form.querySelector('button[type="submit"]').disabled = false
+        }
+      } catch (err) {
+        console.error('Signup / Database error:', err)
+        formError.textContent = err.message || 'An error occurred during signup.'
+        processingMessage.style.display = 'none'
+        form.querySelector('button[type="submit"]').disabled = false
+      }
+    })
+
+    signinLink.addEventListener('click', () => {
+      window.location.href = 'client-login.html'
+    })
+
+    const urlParams = new URLSearchParams(window.location.search)
+    const fromPricing = urlParams.get('from')
+    if (fromPricing === 'pricing') {
+      const popup = document.getElementById('pricingPopup')
+      if (popup) {
+        popup.style.opacity = '1'
+        popup.style.pointerEvents = 'auto'
+        setTimeout(() => {
+          popup.style.opacity = '0'
+          popup.style.pointerEvents = 'none'
+        }, 7000)
+      }
+    }
+  })
 </script>
 </body>
 
