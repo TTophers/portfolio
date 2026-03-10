@@ -271,86 +271,78 @@
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       formError.textContent = "";
-      processingMessage.style.display = "none";
+      processingMessage.style.display = "block";
 
       const fullName = document.getElementById("fullname").value.trim();
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
-      const websiteValue = websiteInput.value; // "yes" or "no"
+      const websiteValue = websiteInput.value;
 
-      // Validation
-      if (!fullName) {
-        formError.textContent = "Full Name is required.";
+      // Basic validation
+      if (!fullName || !email || !password || !websiteValue) {
+        formError.textContent = "Please fill out all required fields.";
+        processingMessage.style.display = "none";
         return;
       }
 
-      // Basic email pattern validation
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!email || !emailPattern.test(email)) {
+      if (!emailPattern.test(email)) {
         formError.textContent = "Please enter a valid email address.";
+        processingMessage.style.display = "none";
         return;
       }
 
-      if (!password || password.length < 6) {
+      if (password.length < 6) {
         formError.textContent = "Password must be at least 6 characters.";
+        processingMessage.style.display = "none";
         return;
       }
-
-      if (!websiteValue) {
-        formError.textContent = "Please select if you already have a website.";
-        return;
-      }
-
-      processingMessage.style.display = "block";
 
       try {
-        // Sign up user with Supabase Auth
-        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              full_name: fullName
-            }
-          }
-        });
+        let signUpData, signUpError;
 
-        if (signUpError) {
-          throw signUpError;
+        // Try signup, retry once if network fails
+        try {
+          ({ data: signUpData, error: signUpError } = await supabase.auth.signUp({
+            email,
+            password,
+            options: { data: { full_name: fullName } }
+          }));
+        } catch (networkErr) {
+          console.warn("SignUp fetch failed, retrying...", networkErr);
+          ({ data: signUpData, error: signUpError } = await supabase.auth.signUp({
+            email,
+            password,
+            options: { data: { full_name: fullName } }
+          }));
         }
 
-        if (!signUpData.user) {
-          throw new Error("Failed to create user.");
-        }
+        if (signUpError) throw signUpError;
+        if (!signUpData.user) throw new Error("Failed to create user.");
 
         const userId = signUpData.user.id;
         const hasWebsite = websiteValue === "yes";
 
-        // Insert user data into 'users' table
-        const { error: insertError } = await supabase
-          .from('users')
-          .insert({
-            id: userId,
-            role: 'client',
-            name: full_Name,
-            email: email,
-            has_website: hasWebsite,
-            created_at: new Date().toISOString()
-          });
+        const { error: insertError } = await supabase.from('users').insert({
+          id: userId,
+          role: 'client',
+          name: fullName,
+          email: email,
+          has_website: hasWebsite,
+          created_at: new Date().toISOString()
+        });
 
-        if (insertError) {
-          throw insertError;
-        }
+        if (insertError) throw insertError;
 
-        // Ensure a session exists before redirecting
+        // Confirm session before redirect
         const { data: sessionData } = await supabase.auth.getSession();
-
         if (sessionData?.session) {
           window.location.replace("client-onboarding.html");
         } else {
           formError.textContent = "Account created. Please log in to continue.";
           processingMessage.style.display = "none";
         }
+
       } catch (err) {
         console.error("Signup / Database error:", err);
         formError.textContent = err.message || "An error occurred during signup.";
