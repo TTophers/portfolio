@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SignUp | Client</title>
+  
   <style>
     :root {
       --bg: #0f1115;
@@ -183,7 +184,9 @@
     window.location.href = '/client-signup.html?from=pricing';
 }</script>
 </head>
+
 <body>
+  
   <nav class="nav">
     <!-- Logo -->
     <div class="logo">Client SignUp</div>
@@ -248,7 +251,8 @@
   </main>
 
   <script type="module">
-    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+    
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.32.0/dist/supabase.js';
 
     const supabaseUrl = 'https://frnzvzlrchrqhxtuqezh.supabase.co';
     const supabaseKey = 'sb_publishable_ZZ0edRrWzAG_uoF5jEeh-w_iedDXCup';
