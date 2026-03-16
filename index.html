@@ -476,7 +476,24 @@
         const SUPABASE_URL = "https://frnzvzlrchrqhxtuqezh.supabase.co";
 const SUPABASE_KEY = "sb_publishable_ZZ0edRrWzAG_uoF5jEeh-w_iedDXCup";
 
+
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* Redirect logged-in users directly to dashboard */
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const { data } = await supabaseClient.auth.getSession();
+    const session = data?.session;
+
+    if (session) {
+      // user already logged in → send to dashboard
+      window.location.replace("/client-dash.html");
+      return;
+    }
+  } catch (err) {
+    console.error("Session check failed:", err);
+  }
+});
 
   const form = document.getElementById("contactForm");
   const responseBox = document.getElementById("formResponse");

@@ -196,17 +196,27 @@
 
 <script type="module">
 
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const supabaseUrl = "https://frnzvzlrchrqhxtuqezh.supabase.co";
 const supabaseKey = "sb_publishable_ZZ0edRrWzAG_uoF5jEeh-w_iedDXCup";
 
-const supabase = createClient(supabaseUrl, supabaseKey);
 
-window.addEventListener('load', async () => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (session) {
-    window.location.href = "client-dash.html";
+const supabase = createClient(supabaseUrl, supabaseKey);
+// Kill any existing session when arriving at the login page
+(async () => {
+  try {
+    await supabase.auth.signOut();
+    console.log("Existing session cleared");
+  } catch (err) {
+    console.warn("Session clear failed", err);
+  }
+})();
+
+// Only redirect after an actual login event
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_IN' && session && session.user) {
+    window.location.href = 'client-dash.html';
   }
 });
 

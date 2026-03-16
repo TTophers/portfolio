@@ -227,6 +227,9 @@
         <label for="email">Email Address</label>
         <input type="email" id="email" required />
 
+        <label for="Phone">Phone Number</label>
+        <input type="Phone" id="Phone" required />
+
         <label for="password">Password</label>
         <input type="password" id="password" required />
 
@@ -249,8 +252,8 @@
       <div class="footer-text">Protected system</div>
     </div>
   </main>
-<!-- Load Supabase JS CDN from unpkg (classic, non-ESM) -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/supabase.min.js"></script>
+<!-- Load Supabase JS CDN from jsdelivr (v2) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/feather-icons"></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
@@ -258,7 +261,7 @@
 
     const supabaseUrl = 'https://frnzvzlrchrqhxtuqezh.supabase.co'
     const supabaseKey = 'sb_publishable_ZZ0edRrWzAG_uoF5jEeh-w_iedDXCup'
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey)
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey)
 
     const websiteButtons = document.querySelectorAll('.website-buttons button')
     const websiteInput = document.getElementById('website')
@@ -286,6 +289,7 @@
       const email = document.getElementById('email').value.trim()
       const password = document.getElementById('password').value
       const websiteValue = websiteInput.value
+      const phone = document.getElementById('Phone').value.trim()
 
       if (!fullName || !email || !password || !websiteValue) {
         formError.textContent = 'Please fill out all required fields.'
@@ -308,7 +312,7 @@
       }
 
       try {
-        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({
           email,
           password,
           options: { data: { full_name: fullName } }
@@ -319,17 +323,20 @@
         const userId = signUpData.user.id
         const hasWebsite = websiteValue === 'yes'
 
-        const { error: insertError } = await supabase.from('users').insert({
-          id: userId,
-          role: 'client',
-          name: fullName,
+        const { error: insertError } = await supabaseClient.from('users').insert({
+          auth_id: userId,        // link to Supabase Auth user
+          full_name: fullName,
           email: email,
+          phone: phone,
+          business: '',          // placeholder for onboarding
+          notes: '', 
+          user_role: 'client',              // placeholder for onboarding
           has_website: hasWebsite,
           created_at: new Date().toISOString()
         })
         if (insertError) throw insertError
 
-        const { data: sessionData } = await supabase.auth.getSession()
+        const { data: sessionData } = await supabaseClient.auth.getSession()
         if (sessionData && sessionData.session) {
           window.location.replace('client-onboarding.html')
         } else {

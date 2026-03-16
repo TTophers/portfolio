@@ -148,8 +148,7 @@
         <label for="notes">Any additional notes or comments</label>
         <textarea id="notes" name="notes" rows="4" placeholder="Optional"></textarea>
 
-        <label for="phone">Phone Number</label>
-        <input type="tel" id="phone" name="phone" placeholder="Required" required pattern="[0-9]{10,15}" />
+
 
         <button type="submit">Submit Info</button>
       </form>
@@ -175,27 +174,22 @@ if (!session || !session.user) {
 
 const userId = session.user.id;
 
-// Ensure a row exists in the same 'users' table created during signup
+// Ensure row exists in 'users' table for this auth user
 const { data: existingUser, error: fetchError } = await supabase
   .from('users')
-  .select('id')
-  .eq('id', userId)
+  .select('*')
+  .eq('auth_id', userId)
   .single();
 
-if (fetchError && fetchError.code !== 'PGRST116') {
-  console.error('User lookup error:', fetchError);
-}
-
-// If for some reason the row doesn't exist, create it so onboarding can update it
 if (!existingUser) {
+  // If somehow missing, create stub row
   const { error: insertError } = await supabase.from('users').insert({
-    id: userId,
-    role: 'client'
+    auth_id: userId,
+    business: '',
+    notes: '',
+    onboardingComplete: false
   });
-
-  if (insertError) {
-    console.error('User row creation failed:', insertError);
-  }
+  if (insertError) console.error('User row creation failed:', insertError);
 }
 
 // Reference to form
@@ -206,17 +200,13 @@ form.addEventListener('submit', async (e) => {
 
   const business = document.getElementById('business').value.trim();
   const notes = document.getElementById('notes').value.trim();
-  const phone = document.getElementById('phone').value.trim();
 
-  // const userId = session.user.id;  <-- Removed this line
-
-  // Update onboarding info in Supabase table (assume 'users' table)
+  // On form submit, update the same row in 'users' table linked by auth_id
   const { error } = await supabase.from('users').update({
     business,
     notes,
-    phone,
     onboardingComplete: true
-  }).eq('id', userId);
+  }).eq('auth_id', userId);
 
   if (error) {
     console.error('Error updating user:', error);
