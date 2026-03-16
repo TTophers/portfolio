@@ -228,7 +228,7 @@
         <input type="email" id="email" required />
 
         <label for="Phone">Phone Number</label>
-        <input type="Phone" id="Phone" required />
+        <input type="tel" id="Phone" required />
 
         <label for="password">Password</label>
         <input type="password" id="password" required />
@@ -335,6 +335,20 @@
           created_at: new Date().toISOString()
         })
         if (insertError) throw insertError
+// Create dashboard row for the new user
+const { error: dashboardError } = await supabaseClient
+  .from('dashboard')
+  .insert({
+    auth_id: userId,
+    full_name: fullName,
+    email: email,
+    plan: 'basic',
+    project_status: 'onboarding',
+    progress: 5,
+    created_at: new Date().toISOString()
+  })
+
+if (dashboardError) throw dashboardError
 
         const { data: sessionData } = await supabaseClient.auth.getSession()
         if (sessionData && sessionData.session) {
