@@ -291,7 +291,13 @@
   const websiteValue = websiteInput.value
   const phone = document.getElementById('Phone').value.trim()
 
-  // --- validation checks here ---
+  // --- simple validation ---
+  if (!fullName || !email || !password || !phone || !websiteValue) {
+    formError.textContent = 'Please fill out all fields.'
+    processingMessage.style.display = 'none'
+    form.querySelector('button[type="submit"]').disabled = false
+    return
+  }
 
   try {
     // --- SIGN UP USER ---
@@ -332,44 +338,31 @@
       created_at: new Date().toISOString()
     }
 
-    // Check if dashboard row exists
+    // check if dashboard row exists
     const { data: existingDashboard, error: fetchError } = await supabaseClient
       .from('dashboard')
       .select('*')
       .eq('auth_id', userId)
       .maybeSingle()
-
-    if (fetchError) {
-      console.error('Error fetching dashboard data:', fetchError)
-      formError.textContent = fetchError.message || JSON.stringify(fetchError)
-      processingMessage.style.display = 'none'
-      form.querySelector('button[type="submit"]').disabled = false
-      return
-    }
+    if (fetchError) throw fetchError
 
     let dashboardError = null
     if (existingDashboard) {
-      // Update existing row
+      // update existing row
       const { error: updateError } = await supabaseClient
         .from('dashboard')
         .update(dashboardRow)
         .eq('auth_id', userId)
       dashboardError = updateError
     } else {
-      // Insert new row
+      // insert new row with explicit random UUID for id
       const { error: insertDashboardError } = await supabaseClient
         .from('dashboard')
-        .insert(dashboardRow)
+        .insert([{ ...dashboardRow, id: crypto.randomUUID() }])
       dashboardError = insertDashboardError
     }
 
-    if (dashboardError) {
-      console.error('Dashboard insert/update failed:', dashboardError)
-      formError.textContent = dashboardError.message || JSON.stringify(dashboardError)
-      processingMessage.style.display = 'none'
-      form.querySelector('button[type="submit"]').disabled = false
-      return
-    }
+    if (dashboardError) throw dashboardError
 
     // --- REDIRECT TO ONBOARDING ---
     window.location.replace('client-onboarding.html')
