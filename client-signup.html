@@ -320,7 +320,7 @@
     })
     if (insertError) throw insertError
 
-    // --- DASHBOARD UPSERT ---
+    // --- SAFE DASHBOARD INSERT/UPDATE ---
     const dashboardRow = {
       auth_id: userId,
       full_name: fullName || '',
@@ -332,24 +332,8 @@
       created_at: new Date().toISOString()
     }
 
-    console.log('Dashboard upsert payload:', dashboardRow)
-
-    const { data: dashboardData, error: dashboardError } = await supabaseClient
-      .from('dashboard')
-      .upsert(dashboardRow, { onConflict: ['auth_id'] }) // <- array here
-
-    if (dashboardError) {
-      console.error('Dashboard upsert failed:', dashboardError)
-      formError.textContent = dashboardError.message || JSON.stringify(dashboardError)
-      processingMessage.style.display = 'none'
-      form.querySelector('button[type="submit"]').disabled = false
-      return
-    }
-
-    console.log('Dashboard upsert success:', dashboardData)
-
-    // --- FETCH DASHBOARD ---
-    const { data: fetchedDashboard, error: fetchError } = await supabaseClient
+    // Check if dashboard row exists
+    const { data: existingDashboard, error: fetchError } = await supabaseClient
       .from('dashboard')
       .select('*')
       .eq('auth_id', userId)
@@ -363,14 +347,32 @@
       return
     }
 
-    // --- REDIRECT TO ONBOARDING ---
-    if (fetchedDashboard) {
-      window.location.replace('client-onboarding.html')
+    let dashboardError = null
+    if (existingDashboard) {
+      // Update existing row
+      const { error: updateError } = await supabaseClient
+        .from('dashboard')
+        .update(dashboardRow)
+        .eq('auth_id', userId)
+      dashboardError = updateError
     } else {
-      formError.textContent = 'Account created. Please log in to continue.'
+      // Insert new row
+      const { error: insertDashboardError } = await supabaseClient
+        .from('dashboard')
+        .insert(dashboardRow)
+      dashboardError = insertDashboardError
+    }
+
+    if (dashboardError) {
+      console.error('Dashboard insert/update failed:', dashboardError)
+      formError.textContent = dashboardError.message || JSON.stringify(dashboardError)
       processingMessage.style.display = 'none'
       form.querySelector('button[type="submit"]').disabled = false
+      return
     }
+
+    // --- REDIRECT TO ONBOARDING ---
+    window.location.replace('client-onboarding.html')
 
   } catch (err) {
     console.error('Signup / Database error:', err)
