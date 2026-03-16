@@ -335,21 +335,33 @@
           created_at: new Date().toISOString()
         })
         if (insertError) throw insertError
-// Upsert dashboard row for the new user (insert or update if exists)
-const { error: dashboardError } = await supabaseClient
-  .from('dashboard')
-  .upsert({
-    auth_id: userId,
-    full_name: fullName,
-    email: email,
-    plan: 'basic',
-    project_status: 'onboarding',
-    progress: 5,
-    site: '',
-    created_at: new Date().toISOString()
-  }, { onConflict: 'auth_id' })
+// Prepare dashboard data with strict validation
+const dashboardRow = {
+  auth_id: userId,
+  full_name: fullName || '',
+  email: email || '',
+  plan: 'basic',
+  project_status: 'onboarding',
+  progress: 5,
+  site: '',
+  created_at: new Date().toISOString()
+}
 
-if (dashboardError) throw dashboardError
+console.log('Dashboard upsert payload:', dashboardRow)
+
+const { data: dashboardData, error: dashboardError } = await supabaseClient
+  .from('dashboard')
+  .upsert(dashboardRow, { onConflict: 'auth_id' })
+
+if (dashboardError) {
+  console.error('Dashboard upsert failed:', dashboardError)
+  formError.textContent = dashboardError.message || JSON.stringify(dashboardError)
+  processingMessage.style.display = 'none'
+  form.querySelector('button[type="submit"]').disabled = false
+  return
+}
+
+console.log('Dashboard upsert success:', dashboardData)
 
         const { data: sessionData } = await supabaseClient.auth.getSession()
         if (sessionData && sessionData.session) {
