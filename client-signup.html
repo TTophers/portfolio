@@ -291,27 +291,7 @@
   const websiteValue = websiteInput.value
   const phone = document.getElementById('Phone').value.trim()
 
-  if (!fullName || !email || !password || !websiteValue) {
-    formError.textContent = 'Please fill out all required fields.'
-    processingMessage.style.display = 'none'
-    form.querySelector('button[type="submit"]').disabled = false
-    return
-  }
-
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!emailPattern.test(email)) {
-    formError.textContent = 'Please enter a valid email address.'
-    processingMessage.style.display = 'none'
-    form.querySelector('button[type="submit"]').disabled = false
-    return
-  }
-
-  if (password.length < 6) {
-    formError.textContent = 'Password must be at least 6 characters.'
-    processingMessage.style.display = 'none'
-    form.querySelector('button[type="submit"]').disabled = false
-    return
-  }
+  // --- validation checks here ---
 
   try {
     // --- SIGN UP USER ---
@@ -356,7 +336,7 @@
 
     const { data: dashboardData, error: dashboardError } = await supabaseClient
       .from('dashboard')
-      .upsert(dashboardRow, { onConflict: 'auth_id', ignoreDuplicates: false })
+      .upsert(dashboardRow, { onConflict: ['auth_id'] }) // <- array here
 
     if (dashboardError) {
       console.error('Dashboard upsert failed:', dashboardError)
@@ -399,7 +379,6 @@
     form.querySelector('button[type="submit"]').disabled = false
   }
 })
-
     signinLink.addEventListener('click', () => {
       window.location.href = 'client-login.html'
     })
@@ -418,6 +397,7 @@
       }
     }
   })
+
 </script>
 </body>
 
