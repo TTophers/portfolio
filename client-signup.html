@@ -349,6 +349,7 @@ const dashboardRow = {
 
 console.log('Dashboard upsert payload:', dashboardRow)
 
+// Upsert on auth_id, allowing multiple signups safely
 const { data: dashboardData, error: dashboardError } = await supabaseClient
   .from('dashboard')
   .upsert(dashboardRow, { onConflict: 'auth_id' })
@@ -363,14 +364,29 @@ if (dashboardError) {
 
 console.log('Dashboard upsert success:', dashboardData)
 
-        const { data: sessionData } = await supabaseClient.auth.getSession()
-        if (sessionData && sessionData.session) {
-          window.location.replace('client-onboarding.html')
-        } else {
-          formError.textContent = 'Account created. Please log in to continue.'
-          processingMessage.style.display = 'none'
-          form.querySelector('button[type="submit"]').disabled = false
-        }
+// Fetch dashboard safely, allow 0 rows without throwing
+const { data: fetchedDashboard, error: fetchError } = await supabaseClient
+  .from('dashboard')
+  .select('*')
+  .eq('auth_id', userId)
+  .maybeSingle()
+
+if (fetchError) {
+  console.error('Error fetching dashboard data:', fetchError)
+  formError.textContent = fetchError.message || JSON.stringify(fetchError)
+  processingMessage.style.display = 'none'
+  form.querySelector('button[type="submit"]').disabled = false
+  return
+}
+
+// Redirect to onboarding if dashboard row exists
+if (fetchedDashboard) {
+  window.location.replace('client-onboarding.html')
+} else {
+  formError.textContent = 'Account created. Please log in to continue.'
+  processingMessage.style.display = 'none'
+  form.querySelector('button[type="submit"]').disabled = false
+}
       } catch (err) {
         console.error('Signup / Database error:', err)
         formError.textContent = err.message || 'An error occurred during signup.'
