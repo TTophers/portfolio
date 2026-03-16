@@ -335,18 +335,19 @@
           created_at: new Date().toISOString()
         })
         if (insertError) throw insertError
-// Create dashboard row for the new user
+// Upsert dashboard row for the new user (insert or update if exists)
 const { error: dashboardError } = await supabaseClient
   .from('dashboard')
-  .insert({
+  .upsert({
     auth_id: userId,
     full_name: fullName,
     email: email,
     plan: 'basic',
     project_status: 'onboarding',
     progress: 5,
+    site: '',
     created_at: new Date().toISOString()
-  })
+  }, { onConflict: 'auth_id' })
 
 if (dashboardError) throw dashboardError
 
