@@ -335,7 +335,7 @@
           created_at: new Date().toISOString()
         })
         if (insertError) throw insertError
-// Prepare dashboard data with strict validation
+// Prepare dashboard data without including 'id'
 const dashboardRow = {
   auth_id: userId,
   full_name: fullName || '',
@@ -349,7 +349,7 @@ const dashboardRow = {
 
 console.log('Dashboard upsert payload:', dashboardRow)
 
-// Upsert on auth_id, allowing multiple signups safely
+// Upsert on auth_id safely; Postgres will auto-generate 'id'
 const { data: dashboardData, error: dashboardError } = await supabaseClient
   .from('dashboard')
   .upsert(dashboardRow, { onConflict: 'auth_id' })
