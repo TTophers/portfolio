@@ -280,120 +280,125 @@
     })
 
     form.addEventListener('submit', async (e) => {
-      e.preventDefault()
-      formError.textContent = ''
-      processingMessage.style.display = 'block'
-      form.querySelector('button[type="submit"]').disabled = true
+  e.preventDefault()
+  formError.textContent = ''
+  processingMessage.style.display = 'block'
+  form.querySelector('button[type="submit"]').disabled = true
 
-      const fullName = document.getElementById('fullname').value.trim()
-      const email = document.getElementById('email').value.trim()
-      const password = document.getElementById('password').value
-      const websiteValue = websiteInput.value
-      const phone = document.getElementById('Phone').value.trim()
+  const fullName = document.getElementById('fullname').value.trim()
+  const email = document.getElementById('email').value.trim()
+  const password = document.getElementById('password').value
+  const websiteValue = websiteInput.value
+  const phone = document.getElementById('Phone').value.trim()
 
-      if (!fullName || !email || !password || !websiteValue) {
-        formError.textContent = 'Please fill out all required fields.'
-        processingMessage.style.display = 'none'
-        form.querySelector('button[type="submit"]').disabled = false
-        return
-      }
-      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      if (!emailPattern.test(email)) {
-        formError.textContent = 'Please enter a valid email address.'
-        processingMessage.style.display = 'none'
-        form.querySelector('button[type="submit"]').disabled = false
-        return
-      }
-      if (password.length < 6) {
-        formError.textContent = 'Password must be at least 6 characters.'
-        processingMessage.style.display = 'none'
-        form.querySelector('button[type="submit"]').disabled = false
-        return
-      }
+  if (!fullName || !email || !password || !websiteValue) {
+    formError.textContent = 'Please fill out all required fields.'
+    processingMessage.style.display = 'none'
+    form.querySelector('button[type="submit"]').disabled = false
+    return
+  }
 
-      try {
-        const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({
-          email,
-          password,
-          options: { data: { full_name: fullName } }
-        })
-        if (signUpError) throw signUpError
-        if (!signUpData.user) throw new Error('Failed to create user.')
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailPattern.test(email)) {
+    formError.textContent = 'Please enter a valid email address.'
+    processingMessage.style.display = 'none'
+    form.querySelector('button[type="submit"]').disabled = false
+    return
+  }
 
-        const userId = signUpData.user.id
-        const hasWebsite = websiteValue === 'yes'
+  if (password.length < 6) {
+    formError.textContent = 'Password must be at least 6 characters.'
+    processingMessage.style.display = 'none'
+    form.querySelector('button[type="submit"]').disabled = false
+    return
+  }
 
-        const { error: insertError } = await supabaseClient.from('users').insert({
-          auth_id: userId,        // link to Supabase Auth user
-          full_name: fullName,
-          email: email,
-          phone: phone,
-          business: '',          // placeholder for onboarding
-          notes: '', 
-          user_role: 'client',              // placeholder for onboarding
-          has_website: hasWebsite,
-          created_at: new Date().toISOString()
-        })
-        if (insertError) throw insertError
-// Prepare dashboard data without including 'id'
-const dashboardRow = {
-  auth_id: userId,
-  full_name: fullName || '',
-  email: email || '',
-  plan: 'basic',
-  project_status: 'onboarding',
-  progress: 5,
-  site: '',
-  created_at: new Date().toISOString()
-}
-
-console.log('Dashboard upsert payload:', dashboardRow)
-
-// Upsert on auth_id safely; Postgres will auto-generate 'id'
-const { data: dashboardData, error: dashboardError } = await supabaseClient
-  .from('dashboard')
-  .upsert(dashboardRow, { onConflict: 'auth_id' })
-
-if (dashboardError) {
-  console.error('Dashboard upsert failed:', dashboardError)
-  formError.textContent = dashboardError.message || JSON.stringify(dashboardError)
-  processingMessage.style.display = 'none'
-  form.querySelector('button[type="submit"]').disabled = false
-  return
-}
-
-console.log('Dashboard upsert success:', dashboardData)
-
-// Fetch dashboard safely, allow 0 rows without throwing
-const { data: fetchedDashboard, error: fetchError } = await supabaseClient
-  .from('dashboard')
-  .select('*')
-  .eq('auth_id', userId)
-  .maybeSingle()
-
-if (fetchError) {
-  console.error('Error fetching dashboard data:', fetchError)
-  formError.textContent = fetchError.message || JSON.stringify(fetchError)
-  processingMessage.style.display = 'none'
-  form.querySelector('button[type="submit"]').disabled = false
-  return
-}
-
-// Redirect to onboarding if dashboard row exists
-if (fetchedDashboard) {
-  window.location.replace('client-onboarding.html')
-} else {
-  formError.textContent = 'Account created. Please log in to continue.'
-  processingMessage.style.display = 'none'
-  form.querySelector('button[type="submit"]').disabled = false
-}
-      } catch (err) {
-        console.error('Signup / Database error:', err)
-        formError.textContent = err.message || 'An error occurred during signup.'
-        processingMessage.style.display = 'none'
-        form.querySelector('button[type="submit"]').disabled = false
-      }
+  try {
+    // --- SIGN UP USER ---
+    const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({
+      email,
+      password,
+      options: { data: { full_name: fullName } }
     })
+    if (signUpError) throw signUpError
+    if (!signUpData.user) throw new Error('Failed to create user.')
+
+    const userId = signUpData.user.id
+    const hasWebsite = websiteValue === 'yes'
+
+    // --- INSERT INTO USERS TABLE ---
+    const { error: insertError } = await supabaseClient.from('users').insert({
+      auth_id: userId,
+      full_name: fullName,
+      email: email,
+      phone: phone,
+      business: '',
+      notes: '',
+      user_role: 'client',
+      has_website: hasWebsite,
+      created_at: new Date().toISOString()
+    })
+    if (insertError) throw insertError
+
+    // --- DASHBOARD UPSERT ---
+    const dashboardRow = {
+      auth_id: userId,
+      full_name: fullName || '',
+      email: email || '',
+      plan: 'basic',
+      project_status: 'onboarding',
+      progress: 5,
+      site: '',
+      created_at: new Date().toISOString()
+    }
+
+    console.log('Dashboard upsert payload:', dashboardRow)
+
+    const { data: dashboardData, error: dashboardError } = await supabaseClient
+      .from('dashboard')
+      .upsert(dashboardRow, { onConflict: 'auth_id', ignoreDuplicates: false })
+
+    if (dashboardError) {
+      console.error('Dashboard upsert failed:', dashboardError)
+      formError.textContent = dashboardError.message || JSON.stringify(dashboardError)
+      processingMessage.style.display = 'none'
+      form.querySelector('button[type="submit"]').disabled = false
+      return
+    }
+
+    console.log('Dashboard upsert success:', dashboardData)
+
+    // --- FETCH DASHBOARD ---
+    const { data: fetchedDashboard, error: fetchError } = await supabaseClient
+      .from('dashboard')
+      .select('*')
+      .eq('auth_id', userId)
+      .maybeSingle()
+
+    if (fetchError) {
+      console.error('Error fetching dashboard data:', fetchError)
+      formError.textContent = fetchError.message || JSON.stringify(fetchError)
+      processingMessage.style.display = 'none'
+      form.querySelector('button[type="submit"]').disabled = false
+      return
+    }
+
+    // --- REDIRECT TO ONBOARDING ---
+    if (fetchedDashboard) {
+      window.location.replace('client-onboarding.html')
+    } else {
+      formError.textContent = 'Account created. Please log in to continue.'
+      processingMessage.style.display = 'none'
+      form.querySelector('button[type="submit"]').disabled = false
+    }
+
+  } catch (err) {
+    console.error('Signup / Database error:', err)
+    formError.textContent = err.message || 'An error occurred during signup.'
+    processingMessage.style.display = 'none'
+    form.querySelector('button[type="submit"]').disabled = false
+  }
+})
 
     signinLink.addEventListener('click', () => {
       window.location.href = 'client-login.html'
