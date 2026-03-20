@@ -281,6 +281,7 @@
       formError.textContent = '';
       processingMessage.style.display = 'block';
       form.querySelector('button[type="submit"]').disabled = true;
+      websiteButtons.forEach(btn => btn.disabled = true);
 
       const fullName = document.getElementById('fullname').value.trim();
       const email = document.getElementById('email').value.trim();
@@ -292,6 +293,7 @@
         formError.textContent = 'Please select if you already have a website.';
         processingMessage.style.display = 'none';
         form.querySelector('button[type="submit"]').disabled = false;
+        websiteButtons.forEach(btn => btn.disabled = false);
         return;
       }
 
@@ -315,7 +317,7 @@
 
         const userId = sessionData.session.user.id;
 
-        // 4️⃣ Insert into users table
+        // 4️⃣ Insert into users table only
         const userRow = {
           auth_id: userId,
           full_name: fullName,
@@ -331,9 +333,7 @@
           .insert(userRow);
         if (userInsertError) throw userInsertError;
 
-     
-
-        // 6️⃣ Redirect to client onboarding page
+        // 5️⃣ Redirect to client onboarding page
         setTimeout(() => {
           window.location.href = 'client-onboarding.html';
         }, 1000);
@@ -342,6 +342,7 @@
         formError.textContent = err.message || 'Error during signup.';
         processingMessage.style.display = 'none';
         form.querySelector('button[type="submit"]').disabled = false;
+        websiteButtons.forEach(btn => btn.disabled = false);
       }
     });
   });

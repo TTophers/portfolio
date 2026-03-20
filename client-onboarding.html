@@ -165,7 +165,6 @@ const supabaseUrl = 'https://frnzvzlrchrqhxtuqezh.supabase.co';
 const supabaseKey = 'sb_publishable_ZZ0edRrWzAG_uoF5jEeh-w_iedDXCup';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Check auth state and get the current user session
 const { data: { session } } = await supabase.auth.getSession();
 
 if (!session || !session.user) {
@@ -174,25 +173,13 @@ if (!session || !session.user) {
 
 const userId = session.user.id;
 
-// Ensure row exists in 'users' table for this auth user
-const { data: existingUser, error: fetchError } = await supabase
+const { data: existingUser } = await supabase
   .from('users')
   .select('*')
   .eq('auth_id', userId)
   .single();
 
-if (!existingUser) {
-  // If somehow missing, create stub row
-  const { error: insertError } = await supabase.from('users').insert({
-    auth_id: userId,
-    business: '',
-    notes: '',
-    onboardingComplete: false
-  });
-  if (insertError) console.error('User row creation failed:', insertError);
-}
 
-// Reference to form
 const form = document.getElementById('onboardingForm');
 
 form.addEventListener('submit', async (e) => {
@@ -201,7 +188,6 @@ form.addEventListener('submit', async (e) => {
   const business = document.getElementById('business').value.trim();
   const notes = document.getElementById('notes').value.trim();
 
-  // On form submit, update the same row in 'users' table linked by auth_id
   const { error } = await supabase.from('users').update({
     business,
     notes,
@@ -212,6 +198,34 @@ form.addEventListener('submit', async (e) => {
     console.error('Error updating user:', error);
     alert('Failed to submit info. Please try again.');
     return;
+  }
+
+  const { data: existingDashboard, error: dashError } = await supabase
+    .from('dashboard')
+    .select('*')
+    .eq('auth_id', userId)
+    .single();
+
+  if (dashError && dashError.code !== 'PGRST116') {
+    console.error('Error checking dashboard:', dashError);
+    alert('Failed to verify dashboard. Please try again.');
+    return;
+  }
+
+  if (!existingDashboard) {
+    const { error: insertDashError } = await supabase.from('dashboard').insert({
+      auth_id: userId,
+      plan: 'basic',
+      project_status: 'not started',
+      progress: 5,
+      site: '',
+      created_at: new Date().toISOString()
+    });
+    if (insertDashError) {
+      console.error('Error inserting dashboard:', insertDashError);
+      alert('Failed to create dashboard. Please try again.');
+      return;
+    }
   }
 
   window.location.href = 'client-dash.html';
