@@ -261,90 +261,79 @@
     const supabaseAnonKey = 'sb_publishable_ZZ0edRrWzAG_uoF5jEeh-w_iedDXCup';
     const supabaseClient = supabase.createClient(supabaseUrl, supabaseAnonKey);
 
+    feather.replace();
+    
     const form = document.getElementById('loginForm');
-    const formError = document.getElementById('formError');
-    const processingMessage = document.getElementById('processingMessage');
+const websiteButtons = document.querySelectorAll('.website-buttons button');
+const websiteInput = document.getElementById('website'); // hidden input to store Yes/No
 
-    const websiteButtons = document.querySelectorAll('.website-buttons button');
-    const websiteInput = document.getElementById('website');
+// Add event listeners to website buttons to update hidden input and selection
+websiteButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    // Remove 'selected' class from all buttons
+    websiteButtons.forEach(btn => btn.classList.remove('selected'));
+    // Add 'selected' class to clicked button
+    button.classList.add('selected');
+    // Update hidden input value
+    websiteInput.value = button.getAttribute('data-value');
+  });
+});
 
-    websiteButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        websiteButtons.forEach(btn => btn.classList.remove('selected'));
-        button.classList.add('selected');
-        websiteInput.value = button.getAttribute('data-value');
-      });
-    });
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      formError.textContent = '';
-      processingMessage.style.display = 'block';
-      form.querySelector('button[type="submit"]').disabled = true;
-      websiteButtons.forEach(btn => btn.disabled = true);
+  // Collect inputs
+  const full_name = document.getElementById('fullname').value.trim();
+  const phone = document.getElementById('Phone').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const site = websiteInput.value; // yes/no
 
-      const fullName = document.getElementById('fullname').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      const hasWebsite = websiteInput.value;
-      const phone = document.getElementById('Phone').value.trim();
+  if (!site) {
+    alert("Please select if you have a website.");
+    return;
+  }
 
-      if (!hasWebsite) {
-        formError.textContent = 'Please select if you already have a website.';
-        processingMessage.style.display = 'none';
-        form.querySelector('button[type="submit"]').disabled = false;
-        websiteButtons.forEach(btn => btn.disabled = false);
-        return;
-      }
+  // 1️⃣ Create user in Supabase Auth
+  const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({
+    email,
+    password,
+    options: {
+      data: { full_name, phone, site }
+    }
+  });
 
-      try {
-        // 1️⃣ Sign up the user
-        const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({
-          email,
-          password,
-          options: { data: { full_name: fullName, phone: phone } }
-        });
-        if (signUpError) throw signUpError;
-        if (!signUpData.user) throw new Error('Failed to create user.');
+  if (signUpError) {
+    alert(signUpError.message);
+    return;
+  }
 
-        // 2️⃣ Wait a moment for session to fully propagate
-        await new Promise(r => setTimeout(r, 1000));
+  const auth_id = signUpData.user.id;
 
-        // 3️⃣ Fetch session explicitly
-        const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
-        if (sessionError) throw sessionError;
-        if (!sessionData.session) throw new Error('No active session yet.');
+  // 2️⃣ Insert row into users table (single-table dashboard)
+  const { error: insertError } = await supabaseClient.from('users').insert([{
+    auth_id,
+    full_name,
+    email,
+    phone,
+    site,
+    plan: "basic",
+    business: " ",
+    notes: " ",
+    onboardingComplete: "false",
+    user_role: "client",
+    progress: 5,
+    created_at: new Date().toISOString()
+  }]);
 
-        const userId = sessionData.session.user.id;
+  if (insertError) {
+    alert(insertError.message);
+    return;
+  }
 
-        // 4️⃣ Insert into users table only
-        const userRow = {
-          auth_id: userId,
-          full_name: fullName,
-          email,
-          phone,
-          business: '',
-          notes: '',
-          user_role: 'client',
-          created_at: new Date().toISOString()
-        };
-        const { error: userInsertError } = await supabaseClient
-          .from('users')
-          .insert(userRow);
-        if (userInsertError) throw userInsertError;
-
-        // 5️⃣ Redirect to client onboarding page
-        setTimeout(() => {
-          window.location.href = 'client-onboarding.html';
-        }, 1000);
-
-      } catch (err) {
-        formError.textContent = err.message || 'Error during signup.';
-        processingMessage.style.display = 'none';
-        form.querySelector('button[type="submit"]').disabled = false;
-        websiteButtons.forEach(btn => btn.disabled = false);
-      }
-    });
+  // 3️⃣ Redirect to onboarding or dashboard
+  window.location.href = 'client-onboarding.html';
+});
   });
 </script>
 </body>

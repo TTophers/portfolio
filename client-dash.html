@@ -17,108 +17,167 @@
     const supabaseUrl = 'https://frnzvzlrchrqhxtuqezh.supabase.co';
     const supabaseKey = 'sb_publishable_ZZ0edRrWzAG_uoF5jEeh-w_iedDXCup';
     const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+  // Global variable for session
+  let currentSession = null;
 
-    async function loadUserData(userId) {
-      // Fetch user info from dashboard table
+  document.addEventListener('DOMContentLoaded', async () => {
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const sidebarWrapper = document.getElementById('sidebarWrapper');
+
+    // Get current session
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    currentSession = session;
+
+    // Redirect if no logged-in user
+    if (!currentSession || !currentSession.user) {
+      window.location.replace('/client-loggin.html');
+      return;
+    }
+
+    console.log('Session user ID:', currentSession.user.id);
+
+    // Load user data
+    const dashboardData = await loadUserData(currentSession.user.id);
+    if (dashboardData) {
+      updateDashboard(dashboardData);
+    }
+
+    // Handle Test Site link
+    const testSiteBtn = document.getElementById('viewTestSiteBtn');
+    if (testSiteBtn && dashboardData && dashboardData.userData.site) {
+      testSiteBtn.href = dashboardData.userData.site;
+    } else if (testSiteBtn) {
+      testSiteBtn.href = '#';
+      testSiteBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    }
+
+    // Watch for auth state changes (logout/session expired)
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+      currentSession = session; // update global session
+      if (!session || !session.user) {
+        window.location.replace('/client-loggin.html');
+      }
+    });
+
+    // Logout button logic
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", async () => {
+        try {
+          await supabaseClient.auth.signOut({ scope: "global" });
+          localStorage.clear();
+          sessionStorage.clear();
+          window.location.href = "/index.html";
+        } catch (err) {
+          console.error("Error signing out:", err);
+        }
+      });
+    }
+
+    // Mobile menu toggle
+    if (mobileMenuBtn && sidebarWrapper) {
+      mobileMenuBtn.addEventListener('click', () => {
+        sidebarWrapper.classList.toggle('-translate-x-full');
+      });
+
+      document.addEventListener('click', (event) => {
+        const isClickInsideSidebar = sidebarWrapper.contains(event.target);
+        const isClickOnHamburger = mobileMenuBtn.contains(event.target);
+
+        // Only close sidebar if click is outside sidebar and hamburger, and sidebar is open
+        if (!isClickInsideSidebar && !isClickOnHamburger && !sidebarWrapper.classList.contains('-translate-x-full')) {
+          sidebarWrapper.classList.add('-translate-x-full');
+        }
+      });
+
+      let mobileMenuTimeout;
+      window.addEventListener('scroll', () => {
+        mobileMenuBtn.classList.remove('opacity-0');
+        mobileMenuBtn.classList.add('opacity-100', 'transition-opacity', 'duration-300');
+
+        clearTimeout(mobileMenuTimeout);
+        mobileMenuTimeout = setTimeout(() => {
+          mobileMenuBtn.classList.remove('opacity-100');
+          mobileMenuBtn.classList.add('opacity-0', 'transition-opacity', 'duration-300');
+        }, 3000);
+      });
+    }
+  });
+
+  // Fetch user data function
+  async function loadUserData(userId) {
+    try {
       const { data: userData, error: userError } = await supabaseClient
-        .from('dashboard')
-        .select('full_name, plan, project_status, progress, site')
+        .from('users')
+        .select('full_name, plan, progress, site')
         .eq('auth_id', userId)
         .single();
 
       if (userError) {
-        console.error('Error fetching dashboard data:', userError);
+        console.error('Error fetching user data:', userError);
         return null;
       }
 
-      // Map progress for a single main project
       const projects = [
-        { name: 'Main Project', progress: userData.progress || 0 }
+        { name: 'Main Project', progress: userData.progress ?? 0 }
       ];
 
-      // For now, placeholders for messages/files counts
+      // Placeholder counts (update if you track messages/files)
       const messagesCount = 0;
       const filesCount = 0;
 
       return { userData, projects, messagesCount, filesCount };
+    } catch (err) {
+      console.error('Unexpected error loading user data:', err);
+      return null;
     }
+  }
 
-    function updateDashboard(data) {
-      const { userData, projects, messagesCount, filesCount } = data;
+  // Update dashboard UI function
+  function updateDashboard(data) {
+    if (!data) return;
+    const { userData, projects, messagesCount, filesCount } = data;
 
-      // Update welcome header
-      const headerName = document.querySelector('h1');
-      if (headerName) headerName.textContent = `Welcome, ${userData.full_name}`;
+    // Welcome header
+    const headerName = document.querySelector('h1');
+    if (headerName) headerName.textContent = `Welcome, ${userData.full_name ?? 'Client'}`;
 
-      // Update plan tier
-      const planTierElements = document.querySelectorAll('.plan-tier');
-      planTierElements.forEach(el => {
-        el.textContent = userData.plan || 'Free';
-      });
-
-      // Update stats cards
-      const activeProjectsCard = document.querySelector('#activeProjectsCount');
-      if (activeProjectsCard) activeProjectsCard.textContent = projects.length;
-
-      const messagesCard = document.querySelector('#messagesCount');
-      if (messagesCard) messagesCard.textContent = messagesCount;
-
-      const filesCard = document.querySelector('#filesCount');
-      if (filesCard) filesCard.textContent = filesCount;
-
-      // Update progress bars
-      const progressContainer = document.querySelector('#projectProgressContainer');
-      if (progressContainer) {
-        progressContainer.innerHTML = '';
-        projects.forEach(project => {
-          const progressValue = project.progress || 0;
-          const projectDiv = document.createElement('div');
-          projectDiv.className = 'mb-4';
-          projectDiv.innerHTML = `
-            <div class="flex justify-between mb-1">
-              <span class="text-sm font-medium text-gray-700">${project.name}</span>
-              <span class="text-sm font-medium text-gray-700">${progressValue}%</span>
-            </div>
-            <progress max="100" value="${progressValue}" class="w-full h-3 rounded bg-gray-200 overflow-hidden">
-              ${progressValue}%
-            </progress>
-          `;
-          progressContainer.appendChild(projectDiv);
-        });
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', async () => {
-      const { data: { session } } = await supabaseClient.auth.getSession();
-
-      if (!session || !session.user) {
-        window.location.replace('/client-loggin.html');
-        return;
-      }
-
-      const user = session.user;
-      console.log('Authenticated Supabase user:', user.id);
-
-      const dashboardData = await loadUserData(user.id);
-      if (dashboardData) {
-        updateDashboard(dashboardData);
-      }
-
-      const testSiteBtn = document.getElementById('viewTestSiteBtn');
-      if (testSiteBtn && dashboardData && dashboardData.userData.site) {
-        testSiteBtn.href = dashboardData.userData.site;
-      } else if (testSiteBtn) {
-        testSiteBtn.href = '#';
-        testSiteBtn.classList.add('opacity-50', 'cursor-not-allowed');
-      }
-
-      // Watch for logout / session changes
-      supabaseClient.auth.onAuthStateChange((event, session) => {
-        if (!session) {
-          window.location.replace('/client-loggin.html');
-        }
-      });
+    // Plan tier
+    document.querySelectorAll('.plan-tier').forEach(el => {
+      el.textContent = userData.plan ?? 'Free';
     });
+
+    // Stats cards
+    const activeProjectsCard = document.querySelector('#activeProjectsCount');
+    if (activeProjectsCard) activeProjectsCard.textContent = projects.length;
+
+    const messagesCard = document.querySelector('#messagesCount');
+    if (messagesCard) messagesCard.textContent = messagesCount;
+
+    const filesCard = document.querySelector('#filesCount');
+    if (filesCard) filesCard.textContent = filesCount;
+
+    // Progress bars
+    const progressContainer = document.querySelector('#projectProgressContainer');
+    if (progressContainer) {
+      progressContainer.innerHTML = '';
+      projects.forEach(project => {
+        const progressValue = project.progress ?? 0;
+        const projectDiv = document.createElement('div');
+        projectDiv.className = 'mb-4';
+        projectDiv.innerHTML = `
+          <div class="flex justify-between mb-1">
+            <span class="text-sm font-medium text-gray-700">${project.name}</span>
+            <span class="text-sm font-medium text-gray-700">${progressValue}%</span>
+          </div>
+          <progress max="100" value="${progressValue}" class="w-full h-3 rounded bg-gray-200 overflow-hidden">
+            ${progressValue}%
+          </progress>
+        `;
+        progressContainer.appendChild(projectDiv);
+      });
+    }
+  }
   </script>
 
   <!-- Sidebar -->
@@ -263,55 +322,5 @@
   <script>
     feather.replace();
   </script>
-  <script>
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    const sidebarWrapper = document.getElementById('sidebarWrapper');
-
-    mobileMenuBtn.addEventListener('click', () => {
-      sidebarWrapper.classList.toggle('-translate-x-full');
-    });
-  </script>
-<script>
-      document.addEventListener('click', (event) => {
-      const isClickInsideSidebar = sidebarWrapper.contains(event.target);
-      const isClickOnHamburger = mobileMenuBtn.contains(event.target);
-
-      // Only close sidebar if click is outside sidebar and hamburger, and sidebar is open
-      if (!isClickInsideSidebar && !isClickOnHamburger && !sidebarWrapper.classList.contains('-translate-x-full')) {
-        sidebarWrapper.classList.add('-translate-x-full');
-      }
-    });
-
-  let mobileMenuTimeout;
-  window.addEventListener('scroll', () => {
-    mobileMenuBtn.classList.remove('opacity-0');
-    mobileMenuBtn.classList.add('opacity-100', 'transition-opacity', 'duration-300');
-
-    clearTimeout(mobileMenuTimeout);
-    mobileMenuTimeout = setTimeout(() => {
-      mobileMenuBtn.classList.remove('opacity-100');
-      mobileMenuBtn.classList.add('opacity-0', 'transition-opacity', 'duration-300');
-    }, 3000);
-  });
-    // Logout logic (fully kill session and return to home)
-    document.addEventListener("DOMContentLoaded", () => {
-      const logoutBtn = document.getElementById("logoutBtn");
-
-      if (logoutBtn) {
-        logoutBtn.addEventListener("click", async () => {
-          try {
-            await supabaseClient.auth.signOut({ scope: "global" });
-
-            localStorage.clear();
-            sessionStorage.clear();
-
-            window.location.href = "/index.html";
-          } catch (err) {
-            console.error("Error signing out:", err);
-          }
-        });
-      }
-    });
-</script>
 </body>
 </html>
