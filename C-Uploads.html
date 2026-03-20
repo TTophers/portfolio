@@ -26,10 +26,6 @@
           <i data-feather="home" class="w-5 h-5 mr-3"></i>
           Dashboard
         </a>
-        <a href="C-Messages.html" class="flex items-center px-6 py-3 text-slate-300 hover:bg-slate-800 rounded-r-md">
-          <i data-feather="message-circle" class="w-5 h-5 mr-3"></i>
-          Messages
-        </a>
         <a href="C-Uploads.html" class="flex items-center px-6 py-3 bg-primary text-white font-semibold rounded-r-md">
           <i data-feather="upload" class="w-5 h-5 mr-3"></i>
           Uploads
@@ -109,9 +105,28 @@
   </style>
 
   <script>
+
+     const supabaseUrl = 'https://frnzvzlrchrqhxtuqezh.supabase.co';
+    const supabaseKey = 'sb_publishable_ZZ0edRrWzAG_uoF5jEeh-w_iedDXCup';
+    const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+    
         document.addEventListener('click', (event) => {
       const isClickInsideSidebar = sidebarWrapper.contains(event.target);
       const isClickOnHamburger = mobileMenuBtn.contains(event.target);
+      // session.js
+async function getSessionUser() {
+  if (!window.supabaseClient) throw new Error('Supabase client not initialized');
+
+  const { data: { session } } = await supabaseClient.auth.getSession();
+
+  if (!session || !session.user) {
+    // Not logged in — redirect to login
+    window.location.replace('/client-loggin.html');
+    return null;
+  }
+
+  return session.user;
+}
 
       // Only close sidebar if click is outside sidebar and hamburger, and sidebar is open
       if (!isClickInsideSidebar && !isClickOnHamburger && !sidebarWrapper.classList.contains('-translate-x-full')) {
@@ -225,10 +240,29 @@
       alert('Logging out...');
       // Add logout logic here
     });
+
   </script>
 <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
 <script>
   feather.replace();
 </script>
+<!-- Tawk.to Script -->
+<script type="text/javascript">
+  var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+  
+  Tawk_API.visitor = {
+    name: 'Client',
+    email: 'client@example.com'
+  };
+  
+  (function(){
+    var s1=document.createElement("script"), s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/69bd9d5dcfaccd1c35824e34/1jk6atd3s';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+  })();
+  </script>
 </body>
 </html>
