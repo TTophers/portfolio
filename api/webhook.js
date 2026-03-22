@@ -51,8 +51,8 @@ export default async function handler(req, res) {
     await supabase
       .from('users')
       .update({
-        payments: updatedPayments,
-        stripe_customer_id: session.customer
+        stripe_customer_id: session.customer,
+        payments: updatedPayments
       })
       .eq('auth_id', session.client_reference_id);
 
@@ -94,11 +94,32 @@ export default async function handler(req, res) {
       receipt_url: invoiceObj.hosted_invoice_url || ''
     };
 
-    const { data: userData } = await supabase
+    let { data: userData } = await supabase
       .from('users')
-      .select('payments')
+      .select('payments, email')
       .eq('stripe_customer_id', customerId)
       .single();
+
+    // 🔥 fallback: match by email if customer_id not found
+    if (!userData) {
+      const customer = await stripe.customers.retrieve(customerId);
+
+      const { data: fallbackUser } = await supabase
+        .from('users')
+        .select('payments, email')
+        .eq('email', customer.email)
+        .single();
+
+      userData = fallbackUser;
+
+      if (fallbackUser) {
+        // also fix missing stripe_customer_id going forward
+        await supabase
+          .from('users')
+          .update({ stripe_customer_id: customerId })
+          .eq('email', customer.email);
+      }
+    }
 
     const updatedPayments = [...(userData?.payments || []), newPayment];
 
