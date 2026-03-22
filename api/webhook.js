@@ -38,7 +38,8 @@ export default async function handler(req, res) {
       created_at: new Date().toISOString(),
       receipt_url: session.payment_intent
         ? `https://dashboard.stripe.com/payments/${session.payment_intent}`
-        : ''
+        : '',
+      invoice_id: session.invoice || session.id
     };
 
     let { data: userData } = await supabase
@@ -65,7 +66,9 @@ export default async function handler(req, res) {
       }
     }
 
-    const updatedPayments = [...(userData?.payments || []), newPayment];
+    const updatedPayments = userData?.payments?.some(p => p.invoice_id === newPayment.invoice_id)
+      ? userData.payments
+      : [...(userData?.payments || []), newPayment];
 
     if (session.customer) {
       await supabase
@@ -114,7 +117,8 @@ export default async function handler(req, res) {
       amount: amount,
       status: 'paid',
       created_at: new Date().toISOString(),
-      receipt_url: invoiceObj.hosted_invoice_url || ''
+      receipt_url: invoiceObj.hosted_invoice_url || '',
+      invoice_id: invoiceObj.id
     };
 
     let { data: userData } = await supabase
@@ -144,7 +148,9 @@ export default async function handler(req, res) {
       }
     }
 
-    const updatedPayments = [...(userData?.payments || []), newPayment];
+    const updatedPayments = userData?.payments?.some(p => p.invoice_id === newPayment.invoice_id)
+      ? userData.payments
+      : [...(userData?.payments || []), newPayment];
 
     await supabase
       .from('users')
