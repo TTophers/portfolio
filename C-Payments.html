@@ -254,22 +254,21 @@
         window.location.replace('/index.html');
       });
 
-      // Tawk widget setup
       window.Tawk_API = window.Tawk_API || {};
-      window.Tawk_API.visitor = {
-        name: session.user.user_metadata?.full_name || 'Client',
-        email: session.user.email,
-        hash: userId
-      };
+window.Tawk_API.visitor = {
+  name: session.user.user_metadata?.full_name || 'Client',
+  email: session.user.email,
+  hash: session.user.auth_id // persistent, never changes
+};
 
-      // Embed Tawk script once
-      const s1 = document.createElement('script');
-      s1.src = 'https://embed.tawk.to/69bd9d5dcfaccd1c35824e34/1jk6atd3s';
-      s1.async = true;
-      s1.charset = 'UTF-8';
-      s1.setAttribute('crossorigin', '*');
-      document.head.appendChild(s1);
-    });
+(function() {
+  var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+  s1.async = true;
+  s1.src = 'https://embed.tawk.to/69bd9d5dcfaccd1c35824e34/1jk6atd3s';
+  s1.charset = 'UTF-8';
+  s1.setAttribute('crossorigin', '*');
+  s0.parentNode.insertBefore(s1, s0);
+})();})
 </script>
   
   <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
