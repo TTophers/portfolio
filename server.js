@@ -27,7 +27,7 @@ app.post('/create-checkout-session', async (req, res) => {
           quantity: 1
         },
       ],
-      success_url: 'https://www.tophersdesign.com/success.html',
+      success_url: 'https://www.tophersdesign.com/c-Payments.html',
       cancel_url: 'https://www.tophersdesign.com/C-Payments.html',
       client_reference_id: user_id
     });
