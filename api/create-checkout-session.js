@@ -26,7 +26,7 @@ export default async function handler(req, res) {
       mode: 'subscription', // or 'payment' if one-time
       line_items: [{ price: price_id, quantity: 1 }],
       customer_email: email,
-      client_reference_id: user_id,
+      client_reference_id: auth_id,
       success_url: `https://www.tophersdesign.com/C-Payments.html`,
       cancel_url: `https://www.tophersdesign.com/C-Payments.html`
     });
