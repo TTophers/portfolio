@@ -13,13 +13,14 @@ export default async function handler(req, res) {
     return res.status(405).send({ error: 'Method not allowed' });
   }
 
-  const { user_id, email, price_id } = req.body;
+  const { auth_id, email, price_id } = req.body;
 
-  if (!user_id || !email || !price_id) {
+  if (!auth_id || !email || !price_id) {
     return res.status(400).send({ error: 'Missing required fields' });
   }
 
   try {
+    console.log({ auth_id, email, price_id });
     // Create a Stripe Checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
