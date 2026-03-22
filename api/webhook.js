@@ -32,16 +32,6 @@ export default async function handler(req, res) {
     const session = event.data.object;
     console.log('SESSION DATA:', session);
 
-    const newPayment = {
-      amount: session.amount_total / 100,
-      status: 'paid',
-      created_at: new Date().toISOString(),
-      receipt_url: session.payment_intent
-        ? `https://dashboard.stripe.com/payments/${session.payment_intent}`
-        : '',
-      invoice_id: session.invoice || session.id
-    };
-
     let { data: userData } = await supabase
       .from('users')
       .select('payments, email')
@@ -66,9 +56,23 @@ export default async function handler(req, res) {
       }
     }
 
-    const updatedPayments = userData?.payments?.some(p => p.invoice_id === newPayment.invoice_id)
-      ? userData.payments
-      : [...(userData?.payments || []), newPayment];
+    const existingPayments = Array.isArray(userData?.payments) ? userData.payments : [];
+
+    const newPayment = {
+      amount: session.amount_total / 100, // 0 is valid
+      status: session.amount_total === 0 ? 'free' : 'paid',
+      created_at: new Date().toISOString(),
+      receipt_url: session.payment_intent
+        ? `https://dashboard.stripe.com/payments/${session.payment_intent}`
+        : session.invoice
+        ? `https://dashboard.stripe.com/invoices/${session.invoice}`
+        : '',
+      invoice_id: session.invoice || session.id,
+    };
+
+    const updatedPayments = existingPayments.some(p => p.invoice_id === newPayment.invoice_id)
+      ? existingPayments
+      : [...existingPayments, newPayment];
 
     if (session.customer) {
       await supabase
@@ -113,14 +117,6 @@ export default async function handler(req, res) {
       invoiceObj = invoice;
     }
 
-    const newPayment = {
-      amount: amount,
-      status: 'paid',
-      created_at: new Date().toISOString(),
-      receipt_url: invoiceObj.hosted_invoice_url || '',
-      invoice_id: invoiceObj.id
-    };
-
     let { data: userData } = await supabase
       .from('users')
       .select('payments, email')
@@ -148,9 +144,19 @@ export default async function handler(req, res) {
       }
     }
 
-    const updatedPayments = userData?.payments?.some(p => p.invoice_id === newPayment.invoice_id)
-      ? userData.payments
-      : [...(userData?.payments || []), newPayment];
+    const existingPayments = Array.isArray(userData?.payments) ? userData.payments : [];
+
+    const newPayment = {
+      amount: amount, // can be 0
+      status: amount === 0 ? 'free' : 'paid',
+      created_at: new Date().toISOString(),
+      receipt_url: invoiceObj.hosted_invoice_url || '',
+      invoice_id: invoiceObj.id,
+    };
+
+    const updatedPayments = existingPayments.some(p => p.invoice_id === newPayment.invoice_id)
+      ? existingPayments
+      : [...existingPayments, newPayment];
 
     await supabase
       .from('users')
