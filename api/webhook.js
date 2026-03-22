@@ -62,20 +62,42 @@ export default async function handler(req, res) {
   if (
     event.type === 'invoice.payment_succeeded' ||
     event.type === 'invoice_payment.paid'
-  )  {
-    const invoice = event.data.object;
+  ) {
+    let invoiceObj;
+    let customerId;
+    let amount;
+
+    // Handle NEW event: invoice_payment.paid
+    if (event.type === 'invoice_payment.paid') {
+      const payment = event.data.object;
+
+      // Fetch full invoice to get customer ID
+      const fullInvoice = await stripe.invoices.retrieve(payment.invoice);
+
+      customerId = fullInvoice.customer;
+      amount = payment.amount_paid / 100;
+      invoiceObj = fullInvoice;
+    }
+
+    // Handle STANDARD event: invoice.payment_succeeded
+    if (event.type === 'invoice.payment_succeeded') {
+      const invoice = event.data.object;
+      customerId = invoice.customer;
+      amount = invoice.amount_paid / 100;
+      invoiceObj = invoice;
+    }
 
     const newPayment = {
-      amount: invoice.amount_paid / 100,
+      amount: amount,
       status: 'paid',
       created_at: new Date().toISOString(),
-      receipt_url: invoice.hosted_invoice_url || ''
+      receipt_url: invoiceObj.hosted_invoice_url || ''
     };
 
     const { data: userData } = await supabase
       .from('users')
       .select('payments')
-      .eq('stripe_customer_id', invoice.customer)
+      .eq('stripe_customer_id', customerId)
       .single();
 
     const updatedPayments = [...(userData?.payments || []), newPayment];
@@ -83,9 +105,9 @@ export default async function handler(req, res) {
     await supabase
       .from('users')
       .update({ payments: updatedPayments })
-      .eq('stripe_customer_id', invoice.customer);
+      .eq('stripe_customer_id', customerId);
 
-    console.log('Invoice payment recorded for customer:', invoice.customer);
+    console.log('Invoice payment recorded for customer:', customerId);
   }
 
   res.status(200).json({ received: true });
