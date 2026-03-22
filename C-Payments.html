@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Client Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
+
 </head>
 <body class="h-full flex bg-gray-100 text-gray-800 font-sans">
 
@@ -25,10 +26,6 @@
           Dashboard
         </a>
 
-        <a href="C-Uploads.html" class="flex items-center px-6 py-3 text-slate-300 hover:bg-slate-700 rounded-r-md">
-          <i data-feather="upload" class="w-5 h-5 mr-3"></i>
-          Uploads
-        </a>
         <a href="C-Test.html" class="flex items-center px-6 py-3 text-slate-300 hover:bg-slate-700 rounded-r-md">
           <i data-feather="globe" class="w-5 h-5 mr-3"></i>
           Test Site
@@ -60,8 +57,8 @@
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
       <div>
-        <h1 class="text-2xl font-bold">Welcome, <span class="text-primary">Jane Doe</span></h1>
-        <span class="inline-block mt-1 px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-700 font-medium">Pro Plan</span>
+        <h1 class="text-2xl font-bold">Welcome, <span id="userName" class="text-primary">Client</span></h1>
+        <span id="planBadge" class="inline-block mt-1 px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-700 font-medium">No Plan</span>
       </div>
       <button
         id="payNowBtn"
@@ -107,56 +104,61 @@
             </tr>
           </thead>
           <tbody>
-            <tr class="hover:bg-gray-50">
-              <td class="px-4 py-2">Apr 30, 2024</td>
-              <td class="px-4 py-2">$49.00</td>
-              <td class="px-4 py-2"><span class="inline-block px-2 py-1 text-xs bg-green-100 text-green-800 rounded">Paid</span></td>
-              <td class="px-4 py-2"><a href="#" class="text-primary underline">View</a></td>
-            </tr>
-            <tr class="hover:bg-gray-50">
-              <td class="px-4 py-2">Mar 30, 2024</td>
-              <td class="px-4 py-2">$49.00</td>
-              <td class="px-4 py-2"><span class="inline-block px-2 py-1 text-xs bg-green-100 text-green-800 rounded">Paid</span></td>
-              <td class="px-4 py-2"><a href="#" class="text-primary underline">View</a></td>
-            </tr>
-            <tr class="hover:bg-gray-50">
-              <td class="px-4 py-2">Feb 28, 2024</td>
-              <td class="px-4 py-2">$49.00</td>
-              <td class="px-4 py-2"><span class="inline-block px-2 py-1 text-xs bg-green-100 text-green-800 rounded">Paid</span></td>
-              <td class="px-4 py-2"><a href="#" class="text-primary underline">View</a></td>
-            </tr>
-            <!-- Placeholder rows -->
-            <tr class="hover:bg-gray-50">
-              <td class="px-4 py-2">Jan 30, 2024</td>
-              <td class="px-4 py-2">$49.00</td>
-              <td class="px-4 py-2"><span class="inline-block px-2 py-1 text-xs bg-green-100 text-green-800 rounded">Paid</span></td>
-              <td class="px-4 py-2"><a href="#" class="text-primary underline">View</a></td>
-            </tr>
-            <tr class="hover:bg-gray-50">
-              <td class="px-4 py-2">Dec 30, 2023</td>
-              <td class="px-4 py-2">$49.00</td>
-              <td class="px-4 py-2"><span class="inline-block px-2 py-1 text-xs bg-green-100 text-green-800 rounded">Paid</span></td>
-              <td class="px-4 py-2"><a href="#" class="text-primary underline">View</a></td>
-            </tr>
           </tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <script>
-    // Simulate Stripe Checkout trigger
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+  
+    // Replace with your actual Supabase URL and anon key
+    const supabaseUrl = 'https://frnzvzlrchrqhxtuqezh.supabase.co';
+    const supabaseKey = 'sb_publishable_ZZ0edRrWzAG_uoF5jEeh-w_iedDXCup';
+    const supabaseClient = createClient(supabaseUrl, supabaseKey);
+
+
+    // Stripe Checkout trigger
     document.addEventListener('DOMContentLoaded', function () {
       const payBtn = document.getElementById('payNowBtn');
       if (payBtn) {
-        payBtn.addEventListener('click', function () {
-          console.log('Stripe Checkout would be triggered here.');
-          alert('Stripe Checkout would be triggered here.');
+        payBtn.addEventListener('click', async () => {
+          try {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session || !session.user) {
+              alert('You must be logged in.');
+              return;
+            }
+
+            const res = await fetch('http://localhost:3000/create-checkout-session', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                user_id: session.user.id,
+                email: session.user.email
+              })
+            });
+
+            const data = await res.json();
+
+            if (data.url) {
+              window.location.href = data.url;
+            } else {
+              console.error('No checkout URL returned:', data);
+              alert('Something went wrong creating checkout session.');
+            }
+          } catch (err) {
+            console.error('Stripe error:', err);
+            alert('Error connecting to payment server.');
+          }
         });
       }
       document.addEventListener('click', (event) => {
       const isClickInsideSidebar = sidebarWrapper.contains(event.target);
-      const isClickOnHamburger = mobileMenuBtn.contains(event.target);
+      const isClickOnHamburger = sidebarToggle.contains(event.target);
 
       // Only close sidebar if click is outside sidebar and hamburger, and sidebar is open
       if (!isClickInsideSidebar && !isClickOnHamburger && !sidebarWrapper.classList.contains('-translate-x-full')) {
@@ -185,34 +187,82 @@
         }
       });
 
-      logoutBtn.addEventListener('click', () => {
-        // Placeholder logout logic
-        alert('Logging out...');
-        // Redirect to logout page or clear session here
-        // window.location.href = '/logout';
+      logoutBtn.addEventListener('click', async () => {
+        try {
+          await supabaseClient.auth.signOut();
+        } catch (err) {
+          console.error('Logout error:', err);
+        }
+        window.location.replace('/index.html');
       });
     });
 
-    <!-- Start of Tawk.to Script -->
 
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
 
-// Optional: set a visitor name/email
-Tawk_API.visitor = {
-  name: 'Client',           // static fallback name
-  email: 'client@example.com' // static fallback email
-};
+document.addEventListener('DOMContentLoaded', async () => {
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if (!session || !session.user) return;
 
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/69bd9d5dcfaccd1c35824e34/1jk6atd3s';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
+  const userId = session.user.id;
+
+  // Optional: fetch Tawk widget ID from DB if needed
+  const { data: userData, error } = await supabaseClient
+  .from('users')
+  .select('full_name, plan, price_id, payments')
+  .eq('auth_id', userId)
+  .single()
+  console.log('userData:', userData, 'error:', error);;
+
+  if (userData) {
+    const nameEl = document.getElementById('userName');
+    const planEl = document.getElementById('planBadge');
+
+    if (nameEl) nameEl.textContent = userData.full_name || 'Client';
+    if (planEl) planEl.textContent = userData.plan || 'No Plan';
+  }
+
+  // Fetch payment history from user JSON column
+  const payments = userData.payments || [];
+
+  const tableBody = document.querySelector('tbody');
+  tableBody.innerHTML = '';
+
+  if (payments.length > 0) {
+    payments.forEach(p => {
+      const row = `
+        <tr class="hover:bg-gray-50">
+          <td class="px-4 py-2">${new Date(p.created_at).toLocaleDateString()}</td>
+          <td class="px-4 py-2">$${p.amount}</td>
+          <td class="px-4 py-2">
+            <span class="inline-block px-2 py-1 text-xs ${p.status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'} rounded">
+              ${p.status}
+            </span>
+          </td>
+          <td class="px-4 py-2">${p.receipt_url ? `<a href="${p.receipt_url}" target="_blank" class="text-primary underline">View</a>` : '—'}</td>
+        </tr>
+      `;
+      tableBody.innerHTML += row;
+    });
+  } else {
+    tableBody.innerHTML = '<tr><td colspan="4" class="px-4 py-2 text-center text-gray-500">No payments yet.</td></tr>';
+  }
+
+  window.Tawk_API = window.Tawk_API || {};
+  window.Tawk_API.visitor = {
+    name: session.user.user_metadata?.full_name || 'Client',
+    email: session.user.email,
+    hash: userId
+  };
+
+  // Embed Tawk script once
+  const s1 = document.createElement('script');
+  s1.src = 'https://embed.tawk.to/69bd9d5dcfaccd1c35824e34/1jk6atd3s';
+  s1.async = true;
+  s1.charset = 'UTF-8';
+  s1.setAttribute('crossorigin', '*');
+  document.head.appendChild(s1);
+});
 </script>
-<!-- End of Tawk.to Script -->
   
   <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
   <script>

@@ -26,10 +26,6 @@
           <i data-feather="home" class="w-5 h-5 mr-3"></i>
           Dashboard
         </a>
-        <a href="C-Uploads.html" class="flex items-center px-6 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-r-md">
-          <i data-feather="upload" class="w-5 h-5 mr-3"></i>
-          Uploads
-        </a>
         <a href="C-Test.html" class="flex items-center px-6 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-r-md">
           <i data-feather="globe" class="w-5 h-5 mr-3"></i>
           Test Site
@@ -289,11 +285,40 @@
   const { data: { session } } = await supabaseClient.auth.getSession();
   if (!session || !session.user) return;
 
+  // Create a unique identifier per user
+  const userId = session.user.id; // Supabase user ID
+
+  // Optional: Store or fetch Tawk widget ID for this user from your DB
+  let tawkId = null;
+  const { data: userData, error } = await supabaseClient
+    .from('users')
+    .select('tawk_widget_id')
+    .eq('auth_id', userId)
+    .single();
+
+  if (!error && userData?.tawk_widget_id) {
+    tawkId = userData.tawk_widget_id;
+  }
+
+  // Assign visitor attributes
   window.Tawk_API = window.Tawk_API || {};
   window.Tawk_API.visitor = {
     name: session.user.user_metadata?.full_name || 'Client',
-    email: session.user.email
+    email: session.user.email,
+    hash: userId // persistent across sessions
   };
+
+  // Load Tawk widget
+  var Tawk_LoadStart = new Date();
+  (function() {
+    var s1=document.createElement("script"), s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/69bd9d5dcfaccd1c35824e34/1jk6atd3s';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+  })();
+
 
   // Embed Tawk script
   var Tawk_LoadStart = new Date();

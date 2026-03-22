@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Client Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+  
+    // Replace with your actual Supabase URL and anon key
+    const supabaseUrl = 'https://frnzvzlrchrqhxtuqezh.supabase.co';
+    const supabaseKey = 'sb_publishable_ZZ0edRrWzAG_uoF5jEeh-w_iedDXCup';
+    window.supabaseClient = createClient(supabaseUrl, supabaseKey);
+  </script>
 </head>
 <body class="h-full flex bg-gray-100 text-gray-800 font-sans">
 
@@ -23,10 +31,6 @@
         <a href="client-dash.html" class="flex items-center px-6 py-3 text-slate-300 hover:bg-slate-800 rounded-r-md">
           <i data-feather="home" class="w-5 h-5 mr-3"></i>
           Dashboard
-        </a>
-        <a href="C-Uploads.html" class="flex items-center px-6 py-3 text-slate-300 hover:bg-slate-800 rounded-r-md">
-          <i data-feather="upload" class="w-5 h-5 mr-3"></i>
-          Uploads
         </a>
         <a href="C-Test.html" class="flex items-center px-6 py-3 bg-primary text-white font-semibold rounded-r-md">
           <i data-feather="globe" class="w-5 h-5 mr-3"></i>
@@ -57,7 +61,7 @@
       <!-- Preview Card -->
       <div class="bg-white rounded-lg shadow-md overflow-hidden max-w-5xl mx-auto">
         <div class="relative w-full h-96 sm:h-[500px]">
-          <iframe src="https://www.acmecorp.com" title="Acme Corp Website Preview" class="w-full h-full border-0" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"></iframe>
+          <iframe id="sitePreview" src="" title="Website Preview" class="w-full h-full border-0" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"></iframe>
           <img src="https://via.placeholder.com/1200x500?text=Website+Preview+Unavailable" alt="Website Preview Unavailable" class="hidden w-full h-full object-cover" />
         </div>
         <div class="p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
@@ -65,7 +69,7 @@
             <span class="inline-block bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full select-none">Live</span>
           </div>
           <div>
-            <a href="https://www.acmecorp.com" target="_blank" rel="noopener noreferrer" class="inline-block px-5 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            <a id="liveSiteBtn" href="#" target="_blank" rel="noopener noreferrer" class="inline-block px-5 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
               View Live Site
             </a>
           </div>
@@ -91,7 +95,7 @@
 async function getSessionUser() {
   if (!window.supabaseClient) throw new Error('Supabase client not initialized');
 
-  const { data: { session } } = await supabaseClient.auth.getSession();
+  const { data: { session } } = await window.supabaseClient.auth.getSession();
 
   if (!session || !session.user) {
     // Not logged in — redirect to login
@@ -128,29 +132,77 @@ async function getSessionUser() {
       }
     });
 
-    logoutBtn.addEventListener('click', () => {
-      // Replace with actual logout logic if needed
-      alert('Logging out...');
-      // For example, redirect to logout endpoint:
-      // window.location.href = '/logout';
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        await window.supabaseClient.auth.signOut();
+      } catch (err) {
+        console.error('Logout error:', err);
+      }
+
+      // Redirect to home page after logout
+      window.location.replace('/index.html');
     });
 
     document.addEventListener('DOMContentLoaded', async () => {
-  const { data: { session } } = await supabaseClient.auth.getSession();
+  const { data: { session } } = await window.supabaseClient.auth.getSession();
   if (!session || !session.user) return;
 
+  // Create a unique identifier per user
+  const userId = session.user.id; // Supabase user ID
+
+  const { data: userData, error } = await window.supabaseClient
+    .from('users')
+    .select('business, plan, site')
+    .eq('auth_id', userId)
+    .single();
+
+  if (error) {
+    console.error('Error fetching user:', error);
+    return;
+  }
+
+  if (userData) {
+    const nameEl = document.querySelector('h1');
+    const planEl = document.querySelector('header span');
+
+    if (nameEl) nameEl.textContent = userData.business || 'Business';
+    if (planEl) planEl.textContent = userData.plan || 'No Plan';
+
+    const iframe = document.getElementById('sitePreview');
+    if (iframe && userData.site) {
+      let url = userData.site;
+
+      // Ensure proper URL format
+      if (!url.startsWith('http')) {
+        url = 'https://' + url;
+      }
+
+      iframe.src = url;
+    }
+
+    const liveBtn = document.getElementById('liveSiteBtn');
+    if (liveBtn && userData.site) {
+      let url = userData.site;
+
+      if (!url.startsWith('http')) {
+        url = 'https://' + url;
+      }
+
+      liveBtn.href = url;
+    }
+  }
+
+  // Assign visitor attributes
   window.Tawk_API = window.Tawk_API || {};
   window.Tawk_API.visitor = {
     name: session.user.user_metadata?.full_name || 'Client',
-    email: session.user.email
+    email: session.user.email,
+    hash: userId // persistent across sessions
   };
-  const supabaseUrl = 'https://frnzvzlrchrqhxtuqezh.supabase.co';
-    const supabaseKey = 'sb_publishable_ZZ0edRrWzAG_uoF5jEeh-w_iedDXCup';
-    const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
-    
-  // Embed Tawk script
+
+  // Load Tawk widget
   var Tawk_LoadStart = new Date();
-  (function(){
+  (function() {
     var s1=document.createElement("script"), s0=document.getElementsByTagName("script")[0];
     s1.async=true;
     s1.src='https://embed.tawk.to/69bd9d5dcfaccd1c35824e34/1jk6atd3s';
@@ -158,24 +210,8 @@ async function getSessionUser() {
     s1.setAttribute('crossorigin','*');
     s0.parentNode.insertBefore(s1,s0);
   })();
+
 });
-
-  var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-
-  // Optional: set a visitor name/email
-  Tawk_API.visitor = {
-    name: 'Client',           // static fallback name
-    email: 'client@example.com' // static fallback email
-  };
-  
-  (function(){
-  var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-  s1.async=true;
-  s1.src='https://embed.tawk.to/69bd9d5dcfaccd1c35824e34/1jk6atd3s';
-  s1.charset='UTF-8';
-  s1.setAttribute('crossorigin','*');
-  s0.parentNode.insertBefore(s1,s0);
-  })();
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
