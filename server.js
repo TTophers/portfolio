@@ -27,8 +27,8 @@ app.post('/create-checkout-session', async (req, res) => {
           quantity: 1
         },
       ],
-      success_url: 'http://localhost:5500/success.html',
-      cancel_url: 'http://localhost:5500/C-Payments.html',
+      success_url: 'https://www.tophersdesign.com/success.html',
+      cancel_url: 'https://www.tophersdesign.com/C-Payments.html',
       client_reference_id: user_id
     });
     
@@ -48,7 +48,7 @@ app.listen(PORT, '0.0.0.0', () => {
 import bodyParser from 'body-parser';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient('https://YOUR_PROJECT.supabase.co', 'YOUR_SERVICE_ROLE_KEY');
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
