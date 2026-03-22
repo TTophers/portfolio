@@ -59,7 +59,10 @@ export default async function handler(req, res) {
     console.log('Checkout payment recorded for user:', session.client_reference_id);
   }
 
-  if (event.type === 'invoice.paid') {
+  if (
+    event.type === 'invoice.payment_succeeded' ||
+    event.type === 'invoice_payment.paid'
+  )  {
     const invoice = event.data.object;
 
     const newPayment = {

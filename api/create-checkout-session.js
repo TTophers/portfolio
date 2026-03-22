@@ -27,7 +27,7 @@ export default async function handler(req, res) {
       line_items: [{ price: price_id, quantity: 1 }],
       customer_email: email,
       client_reference_id: user_id,
-      success_url: `https://www.tophersdesign.com/success.html?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `https://www.tophersdesign.com/C-Payments.html`,
       cancel_url: `https://www.tophersdesign.com/C-Payments.html`
     });
 
