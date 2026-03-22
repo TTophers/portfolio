@@ -30,6 +30,7 @@ export default async function handler(req, res) {
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
+    console.log('SESSION DATA:', session);
 
     const newPayment = {
       amount: session.amount_total / 100,
@@ -40,21 +41,43 @@ export default async function handler(req, res) {
         : ''
     };
 
-    const { data: userData } = await supabase
+    let { data: userData } = await supabase
       .from('users')
-      .select('payments')
+      .select('payments, email')
       .eq('auth_id', session.client_reference_id)
       .single();
 
+    // 🔥 fallback if auth_id match fails
+    if (!userData && session.customer_details?.email) {
+      const { data: fallbackUser } = await supabase
+        .from('users')
+        .select('payments, email')
+        .eq('email', session.customer_details.email)
+        .single();
+
+      userData = fallbackUser;
+
+      if (fallbackUser && session.customer) {
+        await supabase
+          .from('users')
+          .update({ stripe_customer_id: session.customer })
+          .eq('email', session.customer_details.email);
+      }
+    }
+
     const updatedPayments = [...(userData?.payments || []), newPayment];
 
-    await supabase
-      .from('users')
-      .update({
-        stripe_customer_id: session.customer,
-        payments: updatedPayments
-      })
-      .eq('auth_id', session.client_reference_id);
+    if (session.customer) {
+      await supabase
+        .from('users')
+        .update({
+          stripe_customer_id: session.customer,
+          payments: updatedPayments
+        })
+        .eq('auth_id', session.client_reference_id);
+    } else {
+      console.error('NO CUSTOMER ID ON SESSION');
+    }
 
     console.log('Checkout payment recorded for user:', session.client_reference_id);
   }
