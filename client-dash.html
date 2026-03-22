@@ -294,7 +294,17 @@ window.Tawk_API.visitor = {
   email: session.user.email,
   hash: session.user.auth_id // persistent, never changes
 };
+// Info message for Tawk chat
+const tawkNotice = document.createElement('div');
+tawkNotice.textContent = "Messages are saved securely, but chat sessions may reset on a new device or after logging out.";
+tawkNotice.className = "fixed bottom-28 right-4 text-xs text-gray-500 bg-white rounded-md p-2 shadow-sm z-50 transition-opacity duration-1000";
+document.body.appendChild(tawkNotice);
 
+// Fade out after 20 seconds
+setTimeout(() => {
+  tawkNotice.style.opacity = '0';
+  setTimeout(() => tawkNotice.remove(), 1000);
+}, 20000);
 (function() {
   var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
   s1.async = true;
