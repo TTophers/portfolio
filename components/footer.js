@@ -99,10 +99,10 @@ class CustomFooter extends HTMLElement {
             <div class="footer-links">
                 <h3>Services</h3>
                 <ul>
-                    <li><a href="/WebDev">Web Development</a></li>
-                    <li><a href="/about">About Me</a></li>
-                    <li><a href="/SEO">SEO Optimization</a></li>
-                    <li><a href="/WebMaint">Website Maintenance</a></li>
+                    <li><a href="/WebDev.html">Web Development</a></li>
+                    <li><a href="/about.html">About Me</a></li>
+                    <li><a href="/SEO.html">SEO Optimization</a></li>
+                    <li><a href="/WebMaint.html">Website Maintenance</a></li>
                 </ul>
             </div>
             <div class="footer-links">
@@ -114,13 +114,7 @@ class CustomFooter extends HTMLElement {
                     <li><a href="#contact">Contact</a></li>
                 </ul>
             </div>
-            <div class="footer-links">
-                <h3>Legal</h3>
-                <ul>
-                    <li><a href="/privPolc">Privacy Policy</a></li>
-                    <li><a href="/TOS">Terms of Service</a></li>
-                </ul>
-            </div>
+
         </div>
         <div class="copyright">
             &copy; ${new Date().getFullYear()} DevPortfolio Pro. All rights reserved.

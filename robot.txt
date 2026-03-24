@@ -1,0 +1,6 @@
+# Allow all crawlers full access
+User-agent: *
+Disallow:
+
+# Link to your sitemap
+Sitemap: https://tophersdesign.com/sitemap.xml
