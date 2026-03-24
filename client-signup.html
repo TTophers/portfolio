@@ -331,10 +331,32 @@ form.addEventListener('submit', async (e) => {
     return;
   }
 
-  // 3️⃣ Redirect to onboarding or dashboard
-  window.location.href = 'client-onboarding.html';
+  // 3️⃣ Show confirmation popup, then redirect
+  const popup = document.getElementById('pricingPopup');
+  popup.textContent = "Account created! We’ll contact you shortly.";
+  popup.style.opacity = "1";
+
+  setTimeout(() => {
+    popup.style.opacity = "0";
+  }, 2000);
+
+  setTimeout(() => {
+    window.location.href = 'client-onboarding.html';
+  }, 2200);
 });
   });
+  // 3️⃣ Show confirmation popup, then redirect
+const popup = document.getElementById('pricingPopup');
+popup.textContent = "We will contact you shortly after creating an account.";
+popup.style.opacity = "1";
+popup.style.pointerEvents = "auto";
+
+// Hide after 2 seconds
+setTimeout(() => {
+  popup.style.opacity = "0";
+  popup.style.pointerEvents = "none";
+}, 2000);
+
 </script>
 </body>
 
