@@ -1,133 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevPortfolio Pro | Web Developer Portfolio</title>
-    <link rel="stylesheet" href="./style.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-    <script src="https://unpkg.com/feather-icons"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class', 
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#2563eb',  // blue
-                        secondary: '#1e40af' // darker blue
-                    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Christopher Staples | DevPortfolio Pro</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+<script src="https://unpkg.com/feather-icons"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                colors: {
+                    primary: '#2563eb',
+                    secondary: '#1e40af'
                 }
             }
         }
-
-    </script>
-    <style>
-                nav {
-            background-color: #0F172A;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            transition: background-color 0.4s ease, color 0.4s ease;
-        }
-        .logo {
-            color: #2563eb;
-            font-weight: bold;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-        }
-        .logo-icon {
-            margin-right: 0.5rem;
-        }
-        ul {
-            display: flex;
-            gap: 1.5rem;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-        a {
-            color: #ffffff;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s;
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            transition: background-color 0.4s ease, color 0.4s ease;
-        }
-        a:hover {
-            color: #6366f1;
-        }
-        .contact-btn {
-            background-color: #2563eb;
-            color: white;
-        }
-        .contact-btn:hover {
-            background-color: #1e40af;
-            color: white;
-        }
-  
-
-
-        @keyframes jumpTwice {
-          0%, 100% { transform: translateY(0) scale(1); }
-          20%, 60% { transform: translateY(-12px) scale(1.05); }
-          40%, 80% { transform: translateY(0) scale(1); }
-        }
-        .animate-jumpTwice {
-          animation: jumpTwice 1.2s ease-in-out;
-        }
-        </style>
+    }
+</script>
 </head>
 <body class="dark bg-slate-900 text-slate-200 transition-colors duration-500">
-    <nav class="bg-slate-900 dark:bg-gray-900 shadow-md sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
-        <!-- Logo -->
-        <a href="/" class="logo flex items-center text-primary font-bold text-xl">
-          <i data-feather="code" class="logo-icon mr-2"></i>
-          Tophers Design
-        </a>
-      
-        <!-- Hamburger Button -->
-        <button id="mobileMenuBtn" class="md:hidden text-slate-200 focus:outline-none">
-          <i data-feather="menu" class="w-6 h-6"></i>
-        </button>
-      
-        <!-- Menu Links -->
-        <ul id="navLinks" class="hidden md:flex flex-col md:flex-row gap-4 md:gap-6 absolute md:static top-16 left-0 w-full md:w-auto bg-slate-900 md:bg-transparent p-6 md:p-0 md:items-center transition-all duration-300 ease-in-out origin-top">
-          <li><a href="/index.html" class="block text-white hover:text-primary">Home</a></li>
-          <li><a href="/WebDev.html" class="block text-white hover:text-primary">Web Development</a></li>
-          <li><a href="/about.html" class="block text-white hover:text-primary">About me</a></li>
-          <li><a href="/SEO.html" class="block text-white hover:text-primary">SEO</a></li>
-          <li><a href="/client-loggin.html" class="contact-btn block w-full md:w-auto text-white bg-primary hover:bg-secondary rounded-md px-4 py-2 text-center">Login</a></li>
-        </ul>
-      </nav>
 
-<!-- About Me Section -->
-<section id="aboutMe" class="max-w-6xl mx-auto px-6 py-16">
-  <div class="flex flex-col md:flex-row items-center gap-10">
-    <!-- Profile Picture -->
-    <div class="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden shadow-lg flex-shrink-0">
-      <img src="./content/me.JPG" alt="Christopher Staples" class="w-full h-full object-cover">
-    </div>
+<!-- Navbar -->
+<nav class="bg-slate-900 dark:bg-gray-900 shadow-md sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
+    <a href="/" class="logo flex items-center text-primary font-bold text-xl">
+        <i data-feather="code" class="mr-2"></i>Tophers Design
+    </a>
+    <button id="mobileMenuBtn" class="md:hidden text-slate-200 focus:outline-none">
+        <i data-feather="menu" class="w-6 h-6"></i>
+    </button>
+    <ul id="navLinks" class="hidden md:flex flex-col md:flex-row gap-4 md:gap-6 absolute md:static top-16 left-0 w-full md:w-auto bg-slate-900 md:bg-transparent p-6 md:p-0 md:items-center transition-all duration-300 ease-in-out origin-top">
+        <li><a href="/index.html" class="block text-white hover:text-primary">Home</a></li>
+        <li><a href="/WebDev.html" class="block text-white hover:text-primary">Web Development</a></li>
+        <li><a href="/SEO.html" class="block text-white hover:text-primary">SEO</a></li>
+        <li><a href="/about.html" class="block text-white hover:text-primary">About Me</a></li>
+        <li><a href="/client-loggin.html" class="contact-btn block w-full md:w-auto text-white bg-primary hover:bg-secondary rounded-md px-4 py-2 text-center">Login</a></li>
+    </ul>
+</nav>
 
-    <!-- Bio -->
-    <div class="flex-1 text-center md:text-left">
-      <h2 class="text-3xl md:text-4xl font-bold text-primary mb-4">About Me</h2>
-      <p class="text-slate-200 mb-4 leading-relaxed">
-        Hi, I'm Christopher Staples, a passionate web developer from Colorado. I have over 3 years of experience building websites that are not only functional but also visually appealing and user-friendly. I attended <span class="font-semibold text-primary">DevSlops</span>, where I honed my skills in modern web development technologies.
-      </p>
-      <p class="text-slate-400 mb-6 leading-relaxed">
-        My goal is to help businesses and individuals bring their ideas to life on the web, with clean, responsive designs and smooth user experiences.
-      </p>
-      <a href="/client-signup.html" class="inline-block bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition-colors duration-300 font-semibold">Contact Me</a>
-    </div>
-  </div>
-</section>
+<main class="max-w-5xl mx-auto p-8 space-y-12">
 
+    <!-- Hero Section -->
+    <section class="text-center">
+        <h1 class="text-5xl md:text-6xl font-bold mb-4 text-primary">Christopher Staples</h1>
+        <p class="text-lg text-slate-400 max-w-3xl mx-auto">Colorado-based web developer, SEO specialist, and all-around tinkerer. I create sleek websites, solve online problems, and help others navigate the digital world.</p>
+    </section>
+
+    <!-- Early Life Section -->
+    <section class="bg-slate-800 p-8 rounded-xl shadow-lg space-y-4">
+        <h2 class="text-3xl font-semibold text-secondary border-l-4 border-primary pl-3">Early Life & Childhood</h2>
+        <p>Grew up in Aurora, Colorado. I had a great childhood with my family—biking every day, hanging with friends, going to the movie theater, playing basketball and lacrosse. Until freshman year, life was mostly on autopilot.</p>
+        <p>From a young age, I was always playing video games, making sounds, taking apart printers and putting them back together. Music has always been a huge part of my life.</p>
+        <div class="flex justify-center mt-4">
+
+        </div>
+    </section>
+
+    <!-- Early Coding Curiosity -->
+    <section class="bg-slate-800 p-8 rounded-xl shadow-lg space-y-4">
+        <h2 class="text-3xl font-semibold text-secondary border-l-4 border-primary pl-3">Early Coding Curiosity</h2>
+        <p>I’ve always been into tinkering and experimenting. Platforms like Scratch got me hooked, and I spent hours in command tools seeing code change websites before I even refreshed them. I never thought of it as coding—I just loved seeing how things worked.</p>
+        <div class="flex justify-center mt-4">
+
+        </div>
+    </section>
+
+    <!-- Learning Web Development -->
+    <section class="bg-slate-800 p-8 rounded-xl shadow-lg space-y-4">
+        <h2 class="text-3xl font-semibold text-secondary border-l-4 border-primary pl-3">Learning Web Development</h2>
+        <p>I went to DevSlops Coding Academy and then took the internet as my classroom, studying other people’s websites and learning by doing. I’ve always been shooting for gold—making drop-shipping sites that earned some money and pushing myself further.</p>
+        <p>Helping people and taking care of their online presence is what drives me. Every project is a chance to make someone’s life easier online.</p>
+        <div class="flex justify-center mt-4">
+
+        </div>
+    </section>
+
+    <!-- SEO & Online Business -->
+    <section class="bg-slate-800 p-8 rounded-xl shadow-lg space-y-4">
+        <h2 class="text-3xl font-semibold text-secondary border-l-4 border-primary pl-3">SEO & Online Business</h2>
+        <p>In 2022, after graduating, I realized how achievable online income can be if you work hard. I specialize in helping older folks navigate technology and manage their online presence. It’s rewarding to see the impact of my work and how it simplifies life for people who might struggle with tech.</p>
+        <div class="flex justify-center mt-4">
+
+        </div>
+    </section>
+
+    <!-- Work Philosophy -->
+    <section class="bg-slate-800 p-8 rounded-xl shadow-lg space-y-4">
+        <h2 class="text-3xl font-semibold text-secondary border-l-4 border-primary pl-3">Work Philosophy</h2>
+        <p>My days are balanced. I’ll work on a website, then make some music, then spend time with family or go outside. Life is about flow and enjoying the work you do.</p>
+        <p>Design & coding philosophy: I focus on clean, intuitive, user-friendly design that looks as good as it works. Simplicity, functionality, and polish are key.</p>
+    </section>
+
+    <!-- Passions & Hobbies -->
+    <section class="bg-slate-800 p-8 rounded-xl shadow-lg space-y-4">
+        <h2 class="text-3xl font-semibold text-secondary border-l-4 border-primary pl-3">Passions & Hobbies</h2>
+        <p>I ride BMX at a pro level and drift cars (350Z, Silvia line). Music is a huge part of my life—I make hip-hop and EDM. Outdoors are where I recharge: hiking, camping, and exploring in my beloved FourRunner.</p>
+        <div class="flex justify-center mt-4">
+
+        </div>
+    </section>
+
+    <!-- Vision & Why I Do This -->
+    <section class="bg-slate-800 p-8 rounded-xl shadow-lg space-y-4">
+        <h2 class="text-3xl font-semibold text-secondary border-l-4 border-primary pl-3">Why I Do This</h2>
+        <p>I love helping older folks with tech. I like being their personal little scientist, solving problems and guiding them through the digital world. Success isn’t just money—it’s happiness. If my clients are satisfied and happy, we both got paid.</p>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-16 text-center text-slate-400">
+        &copy; 2026 Christopher Staples. All rights reserved.
+    </footer>
+
+</main>
+
+<script>
+    feather.replace();
+</script>
+
+</body>
+</html>

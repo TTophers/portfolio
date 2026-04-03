@@ -1,213 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevPortfolio Pro | Web Developer Portfolio</title>
-    <link rel="stylesheet" href="./style.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-    <script src="https://unpkg.com/feather-icons"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class', 
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#2563eb',  // blue
-                        secondary: '#1e40af' // darker blue
-                    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevPortfolio Pro | Web Developer Portfolio</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+<script src="https://unpkg.com/feather-icons"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                colors: {
+                    primary: '#2563eb',
+                    secondary: '#1e40af'
                 }
             }
         }
-
-    </script>
-    <style>
-                nav {
-            background-color: #0F172A;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            transition: background-color 0.4s ease, color 0.4s ease;
-        }
-        .logo {
-            color: #2563eb;
-            font-weight: bold;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-        }
-        .logo-icon {
-            margin-right: 0.5rem;
-        }
-        ul {
-            display: flex;
-            gap: 1.5rem;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-        a {
-            color: #ffffff;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s;
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            transition: background-color 0.4s ease, color 0.4s ease;
-        }
-        a:hover {
-            color: #6366f1;
-        }
-        .contact-btn {
-            background-color: #2563eb;
-            color: white;
-        }
-        .contact-btn:hover {
-            background-color: #1e40af;
-            color: white;
-        }
-  
-
-
-        @keyframes jumpTwice {
-          0%, 100% { transform: translateY(0) scale(1); }
-          20%, 60% { transform: translateY(-12px) scale(1.05); }
-          40%, 80% { transform: translateY(0) scale(1); }
-        }
-        .animate-jumpTwice {
-          animation: jumpTwice 1.2s ease-in-out;
-        }
-        </style>
+    }
+</script>
 </head>
 <body class="dark bg-slate-900 text-slate-200 transition-colors duration-500">
-    <nav class="bg-slate-900 dark:bg-gray-900 shadow-md sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
-        <!-- Logo -->
-        <a href="/" class="logo flex items-center text-primary font-bold text-xl">
-          <i data-feather="code" class="logo-icon mr-2"></i>
-          Tophers Design
-        </a>
-      
-        <!-- Hamburger Button -->
-        <button id="mobileMenuBtn" class="md:hidden text-slate-200 focus:outline-none">
-          <i data-feather="menu" class="w-6 h-6"></i>
-        </button>
-      
-        <!-- Menu Links -->
-        <ul id="navLinks" class="hidden md:flex flex-col md:flex-row gap-4 md:gap-6 absolute md:static top-16 left-0 w-full md:w-auto bg-slate-900 md:bg-transparent p-6 md:p-0 md:items-center transition-all duration-300 ease-in-out origin-top">
-          <li><a href="/index.html" class="block text-white hover:text-primary">Home</a></li>
-          <li><a href="/WebDev.html" class="block text-white hover:text-primary">Web Development</a></li>
-          <li><a href="/about.html" class="block text-white hover:text-primary">About me</a></li>
-          <li><a href="/SEO.html" class="block text-white hover:text-primary">SEO</a></li>
-          <li><a href="/client-loggin.html" class="contact-btn block w-full md:w-auto text-white bg-primary hover:bg-secondary rounded-md px-4 py-2 text-center">Login</a></li>
-        </ul>
+
+<!-- Navbar -->
+<nav class="bg-slate-900 dark:bg-gray-900 shadow-md sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
+    <a href="/" class="logo flex items-center text-primary font-bold text-xl">
+        <i data-feather="code" class="mr-2"></i>Tophers Design
+    </a>
+    <button id="mobileMenuBtn" class="md:hidden text-slate-200 focus:outline-none">
+        <i data-feather="menu" class="w-6 h-6"></i>
+    </button>
+    <ul id="navLinks" class="hidden md:flex flex-col md:flex-row gap-4 md:gap-6 absolute md:static top-16 left-0 w-full md:w-auto bg-slate-900 md:bg-transparent p-6 md:p-0 md:items-center transition-all duration-300 ease-in-out origin-top">
+        <li><a href="/index.html" class="block text-white hover:text-primary">Home</a></li>
+        <li><a href="/WebDev.html" class="block text-white hover:text-primary">Web Development</a></li>
+        <li><a href="/SEO.html" class="block text-white hover:text-primary">SEO</a></li>
+        <li><a href="/about.html" class="block text-white hover:text-primary">About Me</a></li>
+        <li><a href="/client-loggin.html" class="contact-btn block w-full md:w-auto text-white bg-primary hover:bg-secondary rounded-md px-4 py-2 text-center">Login</a></li>
+    </ul>
 </nav>
 
-<main class="max-w-4xl mx-auto p-8">
-  <header class="mb-10">
-    <h1 class="text-4xl font-bold mb-2 text-primary">Digital Marketing &amp; SEO Strategies</h1>
-    <p class="text-lg text-slate-400">A comprehensive guide to SEO, online ads, and digital marketing for your business.</p>
-  </header>
+<main class="max-w-5xl mx-auto p-8 space-y-8">
 
-  <!-- SEO Section -->
-  <section class="mb-12">
-    <h2 class="text-2xl font-semibold mb-3 text-secondary">What is SEO?</h2>
-    <img src="./content/seo_strategy.png" alt="Illustration of SEO strategies" class="rounded shadow mb-4 w-full">
-    <p class="mb-2">SEO (Search Engine Optimization) is the process of optimizing your website to increase its visibility when people search for products or services related to your business in search engines like Google and Bing.</p>
-    <ul class="list-disc pl-6 mb-4">
-      <li><strong>On-Page SEO</strong>: Optimizing individual pages (e.g., using keywords, meta tags, headings, and internal links).</li>
-      <li><strong>Off-Page SEO</strong>: Building backlinks and external signals to improve authority.</li>
-      <li><strong>Technical SEO</strong>: Enhancing site speed, mobile-friendliness, and crawlability.</li>
-    </ul>
-    <p class="mb-2">Example: If you run a bakery in London, using keywords like "best bakery in London" in your content and meta descriptions can help your site appear higher in search results.</p>
-    <img src="./content/seo2.png" alt="SEO checklist graphic" class="rounded shadow mb-4 w-full">
-    <h3 class="font-semibold mt-6 mb-2">Basic Steps to Improve SEO:</h3>
-    <ol class="list-decimal pl-6 mb-4">
-      <li>Research relevant keywords for your business.</li>
-      <li>Optimize your website content and meta tags.</li>
-      <li>Improve your website’s loading speed and mobile usability.</li>
-      <li>Build quality backlinks from reputable sites.</li>
-      <li>Regularly update your content to keep it fresh.</li>
-    </ol>
-  </section>
+    <!-- Header -->
+    <header class="text-center">
+        <h1 class="text-4xl font-bold mb-2 text-primary">Digital Marketing & SEO Strategies</h1>
+        <p class="text-lg text-slate-400">A comprehensive guide to SEO, online ads, and digital marketing for your business.</p>
+    </header>
 
-  <!-- Google Ads Section -->
-  <section class="mb-12">
-    <h2 class="text-2xl font-semibold mb-3 text-secondary">Google Ads</h2>
-    <img src="./content/google-ads-dashboard.png" alt="Screenshot of Google Ads dashboard" class="rounded shadow mb-4 w-full">
-    <p class="mb-2">Google Ads is an online advertising platform that allows you to display ads on Google’s search results and partner sites. It’s a pay-per-click (PPC) model, meaning you only pay when someone clicks your ad.</p>
-    <h3 class="font-semibold mt-4 mb-2">How Google Ads Works:</h3>
-    <ol class="list-decimal pl-6 mb-4">
-      <li>Set up a campaign and choose your target audience (location, age, interests).</li>
-      <li>Select keywords relevant to your product or service.</li>
-      <li>Create compelling ad copy and visuals.</li>
-      <li>Set your budget and bid for ad placements.</li>
-      <li>Monitor performance and optimize your campaigns.</li>
-    </ol>
-    <p class="mb-2">Example: A local plumber can use Google Ads to appear at the top of search results when someone searches "emergency plumber near me".</p>
-    <img src="./content/ad serach.png" alt="Example of a Google search ad" class="rounded shadow mb-4 w-full">
-  </section>
+    <!-- SEO Section -->
+    <section class="bg-slate-800 p-6 rounded-xl shadow-lg space-y-4">
+        <h2 class="text-2xl font-semibold mb-3 text-secondary border-l-4 border-primary pl-3">What is SEO?</h2>
+        <img src="./content/seo_strategy.png" alt="Illustration of SEO strategies" class="rounded-xl shadow-md w-full max-w-[800px] mx-auto">
+        <p>SEO (Search Engine Optimization) is the process of optimizing your website to increase its visibility when people search for products or services related to your business in search engines like Google and Bing.</p>
+        <ul class="grid md:grid-cols-2 gap-4">
+            <li class="bg-slate-700 p-4 rounded-lg shadow hover:shadow-xl transition">On-Page SEO: Optimizing individual pages (keywords, meta tags, headings, internal links).</li>
+            <li class="bg-slate-700 p-4 rounded-lg shadow hover:shadow-xl transition">Off-Page SEO: Building backlinks and external signals to improve authority.</li>
+            <li class="bg-slate-700 p-4 rounded-lg shadow hover:shadow-xl transition">Technical SEO: Enhancing site speed, mobile-friendliness, and crawlability.</li>
+        </ul>
+        <p>Example: If you run a bakery in London, using keywords like "best bakery in London" in your content and meta descriptions can help your site appear higher in search results.</p>
+        <img src="./content/seo2.png" alt="SEO checklist graphic" class="rounded-xl shadow-md w-full max-w-[800px] mx-auto">
+        <h3 class="font-semibold mt-4 mb-2">Basic Steps to Improve SEO:</h3>
+        <ol class="list-decimal pl-6 space-y-2">
+            <li>Research relevant keywords for your business.</li>
+            <li>Optimize your website content and meta tags.</li>
+            <li>Improve your website’s loading speed and mobile usability.</li>
+            <li>Build quality backlinks from reputable sites.</li>
+            <li>Regularly update your content to keep it fresh.</li>
+        </ol>
+    </section>
 
-  <!-- Meta Ads (Facebook & Instagram) Section -->
-  <section class="mb-12">
-    <h2 class="text-2xl font-semibold mb-3 text-secondary">Meta Ads (Facebook &amp; Instagram)</h2>
-    <img src="./content/meta ads center 1.png" alt="Meta Ads Manager screenshot" class="rounded shadow mb-4 w-full">
-    <p class="mb-2">Meta Ads allow you to advertise across Facebook, Instagram, Messenger, and the Meta Audience Network. These platforms offer powerful targeting options based on user interests, demographics, and behaviors.</p>
-    <h3 class="font-semibold mt-4 mb-2">Steps to Launch a Meta Ad Campaign:</h3>
-    <ol class="list-decimal pl-6 mb-4">
-      <li>Choose your campaign objective (e.g., brand awareness, website traffic, conversions).</li>
-      <li>Define your audience by location, age, gender, interests, and behaviors.</li>
-      <li>Set your budget and schedule.</li>
-      <li>Create engaging ad creatives (images, videos, carousel, etc.).</li>
-      <li>Review and launch your campaign.</li>
-    </ol>
-    <p class="mb-2">Example: An online clothing store can target Instagram users aged 18-35 interested in fashion trends.</p>
-    <img src="./content/meta ad example.webp" alt="Example of a Meta ad creative" class="rounded shadow mb-4 w-full">
-  </section>
+    <!-- Google Ads Section -->
+    <section class="bg-slate-800 p-6 rounded-xl shadow-lg space-y-4">
+        <h2 class="text-2xl font-semibold mb-3 text-secondary border-l-4 border-primary pl-3">Google Ads</h2>
+        <img src="./content/google-ads-dashboard.png" alt="Screenshot of Google Ads dashboard" class="rounded-xl shadow-md w-full max-w-[800px] mx-auto">
+        <p>Google Ads is an online advertising platform that allows you to display ads on Google’s search results and partner sites. It’s a pay-per-click (PPC) model, meaning you only pay when someone clicks your ad.</p>
+        <h3 class="font-semibold mt-2 mb-2">How Google Ads Works:</h3>
+        <ol class="list-decimal pl-6 space-y-2">
+            <li>Set up a campaign and choose your target audience (location, age, interests).</li>
+            <li>Select keywords relevant to your product or service.</li>
+            <li>Create compelling ad copy and visuals.</li>
+            <li>Set your budget and bid for ad placements.</li>
+            <li>Monitor performance and optimize your campaigns.</li>
+        </ol>
+        <p>Example: A local plumber can use Google Ads to appear at the top of search results when someone searches "emergency plumber near me".</p>
+        <img src="./content/ad serach.png" alt="Example of a Google search ad" class="rounded-xl shadow-md w-full max-w-[800px] mx-auto">
+    </section>
 
-  <!-- Facebook Groups & Community Marketing -->
-  <section class="mb-12">
-    <h2 class="text-2xl font-semibold mb-3 text-secondary">Facebook Groups &amp; Community Marketing</h2>
-    <img src="./content/9 of The Best Facebook Groups We’ve Ever Seen-2.webp" alt="Discussion in a Facebook Group" class="rounded shadow mb-4 w-full">
-    <p class="mb-2">Facebook Groups are communities where members share interests and information. Businesses can join relevant groups to engage with potential customers, share expertise, and build trust.</p>
-    <h3 class="font-semibold mt-4 mb-2">Tips for Effective Group Marketing:</h3>
-    <ul class="list-disc pl-6 mb-4">
-      <li>Join groups related to your industry or target audience.</li>
-      <li>Participate in discussions and answer questions genuinely.</li>
-      <li>Share valuable content (not just promotions).</li>
-      <li>Respect group rules and avoid spamming.</li>
-    </ul>
-    <p class="mb-2">Example: A fitness coach can join local health groups to share workout tips and promote their coaching services.</p>
-    <img src="./content/comunity engagment.jpeg" alt="Community engagement graphic" class="rounded shadow mb-4 w-full">
-  </section>
+    <!-- Meta Ads Section -->
+    <section class="bg-slate-800 p-6 rounded-xl shadow-lg space-y-4">
+        <h2 class="text-2xl font-semibold mb-3 text-secondary border-l-4 border-primary pl-3">Meta Ads (Facebook & Instagram)</h2>
+        <img src="./content/meta ads center 1.png" alt="Meta Ads Manager screenshot" class="rounded-xl shadow-md w-full max-w-[800px] mx-auto">
+        <p>Meta Ads allow you to advertise across Facebook, Instagram, Messenger, and the Meta Audience Network. These platforms offer powerful targeting options based on user interests, demographics, and behaviors.</p>
+        <h3 class="font-semibold mt-2 mb-2">Steps to Launch a Meta Ad Campaign:</h3>
+        <ol class="list-decimal pl-6 space-y-2">
+            <li>Choose your campaign objective (brand awareness, website traffic, conversions).</li>
+            <li>Define your audience by location, age, gender, interests, and behaviors.</li>
+            <li>Set your budget and schedule.</li>
+            <li>Create engaging ad creatives (images, videos, carousel, etc.).</li>
+            <li>Review and launch your campaign.</li>
+        </ol>
+        <p>Example: An online clothing store can target Instagram users aged 18-35 interested in fashion trends.</p>
+        <img src="./content/meta ad example.webp" alt="Example of a Meta ad creative" class="rounded-xl shadow-md w-full max-w-[800px] mx-auto">
+    </section>
 
-  <!-- Other Digital Marketing Strategies -->
-  <section class="mb-12">
-    <h2 class="text-2xl font-semibold mb-3 text-secondary">Other Digital Marketing Strategies</h2>
-    <img src="./content/digital.png " alt="Overview of digital marketing channels" class="rounded shadow mb-4 w-full">
-    <ul class="list-disc pl-6 mb-4">
-      <li><strong>Email Marketing:</strong> Build an email list and send newsletters to nurture leads.</li>
-      <li><strong>Content Marketing:</strong> Create helpful blog posts, guides, and videos to attract and educate your audience.</li>
-      <li><strong>Influencer Marketing:</strong> Partner with influencers in your niche to reach new audiences.</li>
-      <li><strong>Analytics &amp; Tracking:</strong> Use tools like Google Analytics to measure performance and adjust strategies.</li>
-    </ul>
-    <h3 class="font-semibold mt-4 mb-2">References &amp; Further Reading:</h3>
-    <ul class="list-disc pl-6">
-      <li><a href="https://moz.com/beginners-guide-to-seo" target="_blank" class="text-primary underline">Moz Beginner's Guide to SEO</a></li>
-      <li><a href="https://ads.google.com/home/resources/" target="_blank" class="text-primary underline">Google Ads Resources</a></li>
-      <li><a href="https://www.facebook.com/business/ads" target="_blank" class="text-primary underline">Meta for Business: Ads</a></li>
-      <li><a href="https://buffer.com/library/social-media-marketing-strategy/" target="_blank" class="text-primary underline">Buffer: Social Media Marketing Strategy</a></li>
-    </ul>
-  </section>
+    <!-- Facebook Groups Section -->
+    <section class="bg-slate-800 p-6 rounded-xl shadow-lg space-y-4">
+        <h2 class="text-2xl font-semibold mb-3 text-secondary border-l-4 border-primary pl-3">Facebook Groups & Community Marketing</h2>
+        <img src="./content/9 of The Best Facebook Groups We’ve Ever Seen-2.webp" alt="Discussion in a Facebook Group" class="rounded-xl shadow-md w-full max-w-[800px] mx-auto">
+        <p>Facebook Groups are communities where members share interests and information. Businesses can join relevant groups to engage with potential customers, share expertise, and build trust.</p>
+        <h3 class="font-semibold mt-2 mb-2">Tips for Effective Group Marketing:</h3>
+        <ul class="grid md:grid-cols-2 gap-4">
+            <li class="bg-slate-700 p-4 rounded-lg shadow hover:shadow-xl transition">Join groups related to your industry or target audience.</li>
+            <li class="bg-slate-700 p-4 rounded-lg shadow hover:shadow-xl transition">Participate in discussions and answer questions genuinely.</li>
+            <li class="bg-slate-700 p-4 rounded-lg shadow hover:shadow-xl transition">Share valuable content (not just promotions).</li>
+            <li class="bg-slate-700 p-4 rounded-lg shadow hover:shadow-xl transition">Respect group rules and avoid spamming.</li>
+        </ul>
+        <p>Example: A fitness coach can join local health groups to share workout tips and promote their coaching services.</p>
+        <img src="./content/comunity engagment.jpeg" alt="Community engagement graphic" class="rounded-xl shadow-md w-full max-w-[800px] mx-auto">
+    </section>
 
-  <footer class="mt-16 text-center text-slate-400">
-    &copy; 2024 Tophers Design. All rights reserved.
-  </footer>
+    <!-- Other Digital Marketing Section -->
+    <section class="bg-slate-800 p-6 rounded-xl shadow-lg space-y-4">
+        <h2 class="text-2xl font-semibold mb-3 text-secondary border-l-4 border-primary pl-3">Other Digital Marketing Strategies</h2>
+        <img src="./content/digital.png" alt="Overview of digital marketing channels" class="rounded-xl shadow-md w-full max-w-[800px] mx-auto">
+        <ul class="grid md:grid-cols-2 gap-4">
+            <li class="bg-slate-700 p-4 rounded-lg shadow hover:shadow-xl transition"><strong>Email Marketing:</strong> Build an email list and send newsletters to nurture leads.</li>
+            <li class="bg-slate-700 p-4 rounded-lg shadow hover:shadow-xl transition"><strong>Content Marketing:</strong> Create blog posts, guides, and videos to attract and educate your audience.</li>
+            <li class="bg-slate-700 p-4 rounded-lg shadow hover:shadow-xl transition"><strong>Influencer Marketing:</strong> Partner with influencers in your niche to reach new audiences.</li>
+            <li class="bg-slate-700 p-4 rounded-lg shadow hover:shadow-xl transition"><strong>Analytics & Tracking:</strong> Use tools like Google Analytics to measure performance and adjust strategies.</li>
+        </ul>
+        <h3 class="font-semibold mt-2 mb-2">References & Further Reading:</h3>
+        <ul class="list-disc pl-6 space-y-2">
+            <li><a href="https://moz.com/beginners-guide-to-seo" target="_blank" class="text-primary underline">Moz Beginner's Guide to SEO</a></li>
+            <li><a href="https://ads.google.com/home/resources/" target="_blank" class="text-primary underline">Google Ads Resources</a></li>
+            <li><a href="https://www.facebook.com/business/ads" target="_blank" class="text-primary underline">Meta for Business: Ads</a></li>
+            <li><a href="https://buffer.com/library/social-media-marketing-strategy/" target="_blank" class="text-primary underline">Buffer: Social Media Marketing Strategy</a></li>
+        </ul>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-16 text-center text-slate-400">
+        &copy; 2024 Tophers Design. All rights reserved.
+    </footer>
+
 </main>
-      
+
+<script>
+    feather.replace();
+</script>
+
+</body>
+</html>
